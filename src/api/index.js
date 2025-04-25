@@ -2,6 +2,6 @@ const express = require('express');
 
 const router = express.Router();
 
-// routers will be imported here
+// TODO : add routed in here in
 
 module.exports = router;
