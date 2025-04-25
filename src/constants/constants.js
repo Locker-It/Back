@@ -1,5 +1,4 @@
-// constants/constants.js
-exports.CONSTANSTS = {
+exports.CONSTANTS = {
     exitCode: 1,
   };
    
