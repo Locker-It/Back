@@ -1,4 +1,3 @@
 exports.CONSTANTS = {
-    exitCode: 1,
-  };
-   
+  exitCode: 1,
+};
