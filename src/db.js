@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { CONSTANTS } = require('./constants/constants.js');
+const { CONSTANTS } = require('./constants/constants');
 
 const connectDB = async () => {
   try {
@@ -10,6 +10,8 @@ const connectDB = async () => {
     console.log('✅ Connected to MongoDB');
   } catch (err) {
     console.error('❌ Error connecting to MongoDB:', err.message);
+    console.log('Exiting process...');
+
     process.exit(CONSTANTS.exitCode);
   }
 };
