@@ -71,3 +71,30 @@ typings/
 
 # Serverless directories
 .serverless
+
+# Node
+
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+pnpm-debug.log
+.env.local
+dist/
+coverage/
+logs/
+
+
+# IntelliJ IDEA
+.idea/
+*.iml
+out/
+
+# VSCode
+.vscode/
+
+# MacOS system files
+.DS_Store
+
+# Other
+*.local
+*.swp
