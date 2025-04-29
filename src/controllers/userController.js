@@ -1,43 +1,46 @@
+const { StatusCodes } = require('http-status-codes');
 const userService = require('../services/userService');
+const { USER_NOT_FOUND, INVALID_INPUT } = require('../constants/errorMessages');
 
 const createUser = async (req, res) => {
   try {
     const user = await userService.createUser(req.body);
-    res.status(201).json(user);
+    res.status(StatusCodes.CREATED).json(user);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(StatusCodes.BAD_REQUEST).json({ error: INVALID_INPUT });
   }
 };
 
 const getAllUsers = async (req, res) => {
   const users = await userService.getAllUsers();
-  res.json(users);
+  res.status(StatusCodes.OK).json(users);
 };
 
 const getUserById = async (req, res) => {
   try {
     const user = await userService.getUserById(req.params.id);
-    res.json(user);
+    res.status(StatusCodes.OK).json(user);
   } catch (error) {
-    res.status(404).json({ error: error.message });
+    res.status(StatusCodes.NOT_FOUND).json({ error: USER_NOT_FOUND });
   }
 };
 
 const updateUser = async (req, res) => {
   try {
     const user = await userService.updateUser(req.params.id, req.body);
-    res.json(user);
+    res.status(StatusCodes.OK).json(user);
   } catch (error) {
-    res.status(404).json({ error: error.message });
+    res.status(StatusCodes.NOT_FOUND).json({ error: USER_NOT_FOUND });
   }
 };
 
 const deleteUser = async (req, res) => {
   try {
-    await userService.deleteUser(req.params.id);
-    res.status(204).send();
+    const { id } = req.params;
+    await userService.deleteUser(id);
+    res.status(StatusCodes.NO_CONTENT).send();
   } catch (error) {
-    res.status(404).json({ error: error.message });
+    res.status(StatusCodes.NOT_FOUND).json({ error: USER_NOT_FOUND });
   }
 };
 
