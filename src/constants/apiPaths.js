@@ -5,4 +5,7 @@ module.exports = {
   PRODUCTS: '/',
   PRODUCT_ID: '/:id',
   PRODUCTS_BASE: '/products',
+  PURCHASES: '/',
+  PURCHASE_ID: '/:id',
+  PURCHASES_BASE: '/purchases',
 };
