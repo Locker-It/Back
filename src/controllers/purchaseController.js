@@ -1,6 +1,6 @@
 const { StatusCodes } = require('http-status-codes');
 const purchaseService = require('../services/purchaseService');
-const { PURCHASE_NOT_FOUND, INVALID_INPUT } = require('../constants/errorMessages');
+const { PURCHASE_NOT_FOUND, INVALID_INPUT,PURCHASES_FETCH_FAILED } = require('../constants/errorMessages');
 
 const createPurchase = async (req, res) => {
   try {
@@ -12,8 +12,12 @@ const createPurchase = async (req, res) => {
 };
 
 const getAllPurchases = async (req, res) => {
-  const purchases = await purchaseService.getAllPurchases();
-  res.status(StatusCodes.OK).json(purchases);
+  try {
+    const purchases = await purchaseService.getAllPurchases();
+    res.status(StatusCodes.OK).json(purchases);
+  } catch (error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: PURCHASES_FETCH_FAILED });
+  }
 };
 
 const getPurchaseById = async (req, res) => {
