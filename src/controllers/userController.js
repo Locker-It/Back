@@ -44,10 +44,32 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const registerUser = async (req, res) => {
+  try {
+    await userService.registerUser(req.body);
+    res
+      .status(StatusCodes.CREATED)
+      .json({ message: 'User registered successfully' });
+  } catch (error) {
+    res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
+  }
+};
+
+const loginUser = async (req, res) => {
+  try {
+    const token = await userService.loginUser(req.body);
+    res.status(StatusCodes.OK).json({ token });
+  } catch (error) {
+    res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
+  }
+};
+
 module.exports = {
   createUser,
   getAllUsers,
   getUserById,
   updateUser,
-  deleteUser
+  deleteUser,
+  registerUser,
+  loginUser,
 };
