@@ -14,10 +14,13 @@ const updateUser = (id, updateData) =>
 
 const deleteUser = (id) => User.findByIdAndDelete(id);
 
+const findByUsername = (username) => User.findOne({username});
+
 module.exports = {
   createUser,
   getAllUsers,
   getUserById,
   updateUser,
   deleteUser,
+  findByUsername,
 };

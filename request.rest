@@ -1,0 +1,3 @@
+### Access Protected Route
+GET http://localhost:3000/api/v1/auth/protected
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODE5YzFjZjAyNDZjNTY1ZTZiMTc3MDkiLCJpYXQiOjE3NDY1MjEzNTAsImV4cCI6MTc0NjUyNDk1MH0.KxcCmX7S0T-ozJmdW918rHkDbjJIjH7jT-UPum-A0CE
