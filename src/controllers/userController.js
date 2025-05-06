@@ -1,6 +1,7 @@
 const { StatusCodes } = require('http-status-codes');
 const userService = require('../services/userService');
 const { USER_NOT_FOUND, INVALID_INPUT } = require('../constants/errorMessages');
+const {USER_REGISTERED_SUCCESS} = require('../constants/userStatuses');
 
 const createUser = async (req, res) => {
   try {
@@ -49,7 +50,7 @@ const registerUser = async (req, res) => {
     await userService.registerUser(req.body);
     res
       .status(StatusCodes.CREATED)
-      .json({ message: 'User registered successfully' });
+      .json({ message: USER_REGISTERED_SUCCESS });
   } catch (error) {
     res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
   }
