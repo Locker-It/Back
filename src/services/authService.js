@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const userRepository = require('../repositories/userRepository');
 const auth = require('../constants/auth');
 const errorMessages = require('../constants/errorMessages');
+const { NUMERIC } = require('../constants/numeric');
 
 const registerUser = async ({ name, email, username, password }) => {
   const existingUser = await userRepository.findByUsername(username);
@@ -10,7 +11,7 @@ const registerUser = async ({ name, email, username, password }) => {
     throw new Error(errorMessages.USERNAME_TAKEN);
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(password, NUMERIC.SALT_ROUNDS);
   const newUser = await userRepository.createUser({
     name,
     email,
@@ -36,9 +37,10 @@ const loginUser = async ({ username, password }) => {
     { [auth.TOKEN_PAYLOAD_KEY]: user._id },
     process.env[auth.JWT_SECRET_KEY],
     {
-      expiresIn: auth.TOKEN_EXPIRES_IN,
+      expiresIn: auth.TOKEN_EXPIRES_TIME,
     },
   );
+  return token;
 };
 
 module.exports = {
