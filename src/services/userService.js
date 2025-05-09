@@ -1,7 +1,7 @@
 const userRepository = require('../repositories/userRepository');
 const { USER_NOT_FOUND } = require('../constants/errorMessages');
-
-
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const createUser = async (userData) => userRepository.createUser(userData);
 
@@ -36,5 +36,5 @@ module.exports = {
   getAllUsers,
   getUserById,
   updateUser,
-  deleteUser
+  deleteUser,
 };

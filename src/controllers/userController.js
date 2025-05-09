@@ -1,6 +1,8 @@
 const { StatusCodes } = require('http-status-codes');
 const userService = require('../services/userService');
 const { USER_NOT_FOUND, INVALID_INPUT } = require('../constants/errorMessages');
+const { USER_REGISTERED_SUCCESS } = require('../constants/userStatuses');
+const authService = require('../services/authService');
 
 const createUser = async (req, res) => {
   try {
@@ -44,10 +46,30 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const registerUser = async (req, res) => {
+  try {
+    await authService.registerUser(req.body);
+    res.status(StatusCodes.CREATED).json({ message: USER_REGISTERED_SUCCESS });
+  } catch (error) {
+    res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
+  }
+};
+
+const loginUser = async (req, res) => {
+  try {
+    const token = await authService.loginUser(req.body);
+    res.status(StatusCodes.OK).json({ token });
+  } catch (error) {
+    res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
+  }
+};
+
 module.exports = {
   createUser,
   getAllUsers,
   getUserById,
   updateUser,
-  deleteUser
+  deleteUser,
+  registerUser,
+  loginUser,
 };

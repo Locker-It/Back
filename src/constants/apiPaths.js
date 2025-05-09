@@ -8,4 +8,7 @@ module.exports = {
   PURCHASES: '/',
   PURCHASE_ID: '/:id',
   PURCHASES_BASE: '/purchases',
+  REGISTER: '/register',
+  LOGIN: '/login',
+  AUTH_BASE: '/auth',
 };
