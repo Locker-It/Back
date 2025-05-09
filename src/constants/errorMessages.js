@@ -6,4 +6,6 @@ module.exports = {
   PURCHASES_FETCH_FAILED: 'Failed to retrieve purchases',
   USERNAME_TAKEN: 'Username already taken',
   INVALID_CREDENTIALS: 'Invalid credentials',
+  UNAUTHORIZED: 'Unauthorized',
+  INVALID_TOKEN: 'Invalid token',
 };

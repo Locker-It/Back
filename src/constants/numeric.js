@@ -1,4 +1,4 @@
 exports.NUMERIC = {
-  exitCode: 1,
+  EXIT_CODE: 1,
   SALT_ROUNDS: 10,
 };
