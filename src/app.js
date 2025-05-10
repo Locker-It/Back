@@ -11,6 +11,6 @@ if (IS_DEV) {
     setupSwagger(app);
 }
 
-  app.use('/api/v1', api)
+app.use('/api/v1', api)
 
 module.exports = app;
