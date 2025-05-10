@@ -34,7 +34,10 @@ const loginUser = async ({ username, password }) => {
   }
 
   const token = jwt.sign(
-    { [auth.TOKEN_PAYLOAD_KEY]: user._id },
+    {
+      [auth.TOKEN_PAYLOAD_KEY]: user._id,
+      role: user.role,
+    },
     process.env[auth.JWT_SECRET_KEY],
     {
       expiresIn: auth.TOKEN_EXPIRES_TIME,
