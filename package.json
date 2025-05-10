@@ -8,7 +8,7 @@
     "dev": "nodemon src/index.js",
     "lint": "eslint --fix src",
     "test": "jest",
-    "check": "node --check ./src/index.js",
+    "check": "find . -name '*.js' -exec node --check {} +",
     "prepare": "husky install"
   },
   "keywords": [],
