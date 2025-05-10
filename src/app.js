@@ -10,7 +10,7 @@ app.use(express.json());
 if (IS_DEV) {
     setupSwagger(app);
 }
-
-app.use('/api/v1', api)
+const broken =
+  app.use('/api/v1', api)
 
 module.exports = app;
