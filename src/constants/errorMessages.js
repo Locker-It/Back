@@ -8,4 +8,5 @@ module.exports = {
   INVALID_CREDENTIALS: 'Invalid credentials',
   UNAUTHORIZED: 'Unauthorized',
   INVALID_TOKEN: 'Invalid token',
+  FORBIDDEN: 'Forbidden',
 };
