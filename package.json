@@ -8,7 +8,7 @@
     "dev": "nodemon src/index.js",
     "lint": "eslint --fix src",
     "test": "jest",
-    "check": "find . -name '*.js' -exec node --check {} +",
+    "check": "find . -type f -name '*.js' -not -path './node_modules/*' -not -path './.husky/*' | xargs -I {} node --check {}",
     "prepare": "husky install"
   },
   "keywords": [],
