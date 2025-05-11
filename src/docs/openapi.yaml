@@ -15,6 +15,9 @@ tags:
     description: Operations related to products
   - name: Purchases
     description: Operations related to purchases
+  - name: Auth
+    description: Authentication operations (register and login)
+
 
 paths:
   /api/v1/users:
@@ -297,6 +300,69 @@ paths:
         404:
           description: Purchase not found
 
+  /api/v1/auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - username
+                - password
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        201:
+          description: User registered successfully
+        400:
+          description: Username already exists or invalid input
+
+  /api/v1/auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Log in a user and return a JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        401:
+          description: Invalid credentials
+
 components:
   schemas:
     User:
@@ -304,37 +370,37 @@ components:
       properties:
         id:
           type: string
-          example: "6635e957a6a5fc1e6fbf9d1a"
+          example: '6635e957a6a5fc1e6fbf9d1a'
         name:
           type: string
-          example: "Jane Smith"
+          example: 'Jane Smith'
         email:
           type: string
-          example: "jane.smith@example.com"
+          example: 'jane.smith@example.com'
         username:
           type: string
-          example: "janesmith"
+          example: 'janesmith'
         role:
           type: string
           enum: [user, admin]
-          example: "user"
+          example: 'user'
         rank:
           type: integer
           example: 7
         review:
           type: string
-          example: "Excellent contributor"
+          example: 'Excellent contributor'
         isVerified:
           type: boolean
           example: true
         createdAt:
           type: string
           format: date-time
-          example: "2025-04-01T12:34:56.789Z"
+          example: '2025-04-01T12:34:56.789Z'
         updatedAt:
           type: string
           format: date-time
-          example: "2025-04-05T09:00:00.000Z"
+          example: '2025-04-05T09:00:00.000Z'
 
     UserInput:
       type: object
@@ -346,26 +412,26 @@ components:
       properties:
         name:
           type: string
-          example: "Jane Smith"
+          example: 'Jane Smith'
         email:
           type: string
-          example: "jane.smith@example.com"
+          example: 'jane.smith@example.com'
         username:
           type: string
-          example: "janesmith"
+          example: 'janesmith'
         password:
           type: string
-          example: "securepassword123"
+          example: 'securepassword123'
         role:
           type: string
           enum: [user, admin]
-          example: "user"
+          example: 'user'
         rank:
           type: integer
           example: 7
         review:
           type: string
-          example: "Excellent contributor"
+          example: 'Excellent contributor'
         isVerified:
           type: boolean
           example: false
@@ -375,13 +441,13 @@ components:
       properties:
         id:
           type: string
-          example: "6635f1234567890abcdef123"
+          example: '6635f1234567890abcdef123'
         name:
           type: string
-          example: "Sample Product"
+          example: 'Sample Product'
         description:
           type: string
-          example: "Generic product description"
+          example: 'Generic product description'
         price:
           type: number
           example: 99.99
@@ -389,14 +455,14 @@ components:
           type: array
           items:
             type: string
-          example: ["https://example.com/image1.jpg"]
+          example: ['https://example.com/image1.jpg']
         status:
           type: string
           enum: [available, sold, pending]
-          example: "available"
+          example: 'available'
         ownerId:
           type: string
-          example: "6635e957a6a5fc1e6fbf9d1a"
+          example: '6635e957a6a5fc1e6fbf9d1a'
         createdAt:
           type: string
           format: date-time
@@ -433,20 +499,20 @@ components:
       properties:
         id:
           type: string
-          example: "6636009876543210fedcba98"
+          example: '6636009876543210fedcba98'
         buyerId:
           type: string
-          example: "6635e957a6a5fc1e6fbf9d1a"
+          example: '6635e957a6a5fc1e6fbf9d1a'
         productId:
           type: string
-          example: "6635f1234567890abcdef123"
+          example: '6635f1234567890abcdef123'
         lockerId:
           type: number
           example: 12
         status:
           type: string
           enum: [pending, approved, delivered, cancelled]
-          example: "pending"
+          example: 'pending'
         createdAt:
           type: string
           format: date-time
