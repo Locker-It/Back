@@ -8,4 +8,6 @@ module.exports = {
   INVALID_CREDENTIALS: 'Invalid credentials',
   UNAUTHORIZED: 'Unauthorized',
   INVALID_TOKEN: 'Invalid token',
+  ERROR_INVALID_JSON: "Invalid JSON in:",
+  ERROR_SYNTAX: "Syntax errors found in JS, JSX or JSON files.",
 };

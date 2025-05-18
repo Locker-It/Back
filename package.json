@@ -8,7 +8,7 @@
     "dev": "nodemon src/index.js",
     "lint": "eslint --fix src",
     "test": "jest",
-    "check": "find . -type f -name '*.js' -not -path './node_modules/*' -not -path './.husky/*' | xargs -I {} node --check {}",
+    "check": "node scripts/checkCompilation.js",
     "prepare": "husky install"
   },
   "keywords": [],
@@ -19,6 +19,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
