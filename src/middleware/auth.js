@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 const authConstants = require('../constants/auth');
 const errorMessages = require('../constants/errorMessages');
 
-// eslint-disable-next-line consistent-return
 const auth = (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith(authConstants.BEARER)) {
@@ -13,9 +12,9 @@ const auth = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
-    next();
+    return next();
   } catch (error) {
-    res.status(401).json({ error: errorMessages.INVALID_TOKEN});
+    return res.status(401).json({ error: errorMessages.INVALID_TOKEN });
   }
 };
 
