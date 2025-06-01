@@ -1,6 +1,6 @@
 const { StatusCodes } = require('http-status-codes');
 const userService = require('../services/userService');
-const { USER_NOT_FOUND, INVALID_INPUT } = require('../constants/errorMessages');
+const { USER_NOT_FOUND, INVALID_INPUT,MISSING_REFRESH_TOKEN } = require('../constants/errorMessages');
 const { USER_REGISTERED_SUCCESS } = require('../constants/userStatuses');
 const authService = require('../services/authService');
 
@@ -57,12 +57,27 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   try {
-    const token = await authService.loginUser(req.body);
-    res.status(StatusCodes.OK).json({ token });
+    const { accessToken, refreshToken } = await authService.loginUser(req.body);
+    res.status(StatusCodes.OK).json({ accessToken, refreshToken });
   } catch (error) {
     res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
   }
 };
+
+
+const refreshTokenController = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: MISSING_REFRESH_TOKEN });
+    }
+    const accessToken = await authService.refreshAccessToken(refreshToken);
+    return res.status(StatusCodes.OK).json({ accessToken });
+  } catch (error) {
+    return res.status(StatusCodes.UNAUTHORIZED).json({ error: error.message });
+  }
+};
+
 
 module.exports = {
   createUser,
@@ -72,4 +87,5 @@ module.exports = {
   deleteUser,
   registerUser,
   loginUser,
+  refreshToken: refreshTokenController,
 };
