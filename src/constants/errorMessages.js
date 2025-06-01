@@ -9,4 +9,5 @@ module.exports = {
   UNAUTHORIZED: 'Unauthorized',
   INVALID_TOKEN: 'Invalid token',
   FORBIDDEN: 'Forbidden',
+  MISSING_REFRESH_TOKEN: 'Missing refresh token',
 };

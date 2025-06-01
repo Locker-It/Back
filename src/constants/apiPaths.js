@@ -11,4 +11,5 @@ module.exports = {
   REGISTER: '/register',
   LOGIN: '/login',
   AUTH_BASE: '/auth',
+  REFRESH: '/refresh',
 };

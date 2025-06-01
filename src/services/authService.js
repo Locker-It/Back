@@ -5,6 +5,17 @@ const auth = require('../constants/auth');
 const errorMessages = require('../constants/errorMessages');
 const { NUMERIC } = require('../constants/numeric');
 
+const generateAccessToken = (user) => jwt.sign(
+    {
+      [auth.TOKEN_PAYLOAD_KEY]: user._id,
+      role: user.role,
+    },
+    process.env[auth.JWT_ACCESS_SECRET_KEY],
+    {
+      expiresIn: auth.ACCESS_TOKEN_EXPIRES_TIME,
+    }
+  );
+
 const registerUser = async ({ name, email, username, password }) => {
   const existingUser = await userRepository.findByUsername(username);
   if (existingUser) {
@@ -33,20 +44,48 @@ const loginUser = async ({ username, password }) => {
     throw new Error(errorMessages.INVALID_CREDENTIALS);
   }
 
-  const token = jwt.sign(
+  const accessToken = generateAccessToken(user);
+
+  const refreshToken = jwt.sign(
     {
       [auth.TOKEN_PAYLOAD_KEY]: user._id,
-      role: user.role,
     },
-    process.env[auth.JWT_SECRET_KEY],
+    process.env[auth.JWT_REFRESH_SECRET_KEY],
     {
-      expiresIn: auth.TOKEN_EXPIRES_TIME,
+      expiresIn: auth.REFRESH_TOKEN_EXPIRES_TIME,
     },
   );
-  return token;
+
+  await userRepository.updateUser(user._id, { refreshToken });
+
+  return { accessToken, refreshToken };
 };
+
+const validateRefreshToken = async (token) => {
+  const decoded = jwt.verify(
+    token,
+    process.env[auth.JWT_REFRESH_SECRET_KEY]
+  );
+
+  const userId = decoded[auth.TOKEN_PAYLOAD_KEY];
+  const user = await userRepository.findById(userId);
+
+  if (!user || !user.refreshTokens.includes(token)) {
+    throw new Error(errorMessages.INVALID_TOKEN);
+  }
+
+  return user;
+};
+
+const refreshAccessToken = async (refreshToken) => {
+  const user = await validateRefreshToken(refreshToken);
+  return generateAccessToken(user);
+};
+
+
 
 module.exports = {
   registerUser,
   loginUser,
+  refreshAccessToken,
 };
