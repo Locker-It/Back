@@ -57,9 +57,7 @@ const loginUser = async ({ username, password }) => {
     },
   );
 
-  await userRepository.updateUser(user._id, {
-    $push: { refreshTokens: refreshToken },
-  });
+  await userRepository.addRefreshToken(user._id, refreshToken);
 
   return { accessToken, refreshToken };
 };
@@ -91,8 +89,7 @@ const logout = async (refreshToken) => {
     throw new Error(errorMessages.USER_NOT_FOUND);
   }
 
-  const updatedTokens = user.refreshTokens.filter(token => token !== refreshToken);
-  await userRepository.updateUser(userId, { refreshTokens: updatedTokens });
+  await userRepository.removeRefreshToken(userId, refreshToken);
 };
 
 module.exports = {
