@@ -9,4 +9,5 @@ module.exports = {
   UNAUTHORIZED: 'Unauthorized',
   INVALID_TOKEN: 'Invalid token',
   FORBIDDEN: 'Forbidden',
+  AVAILABLE_LOCKER_NOT_FOUND:'Available locker not found',
 };
