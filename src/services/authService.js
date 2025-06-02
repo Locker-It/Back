@@ -88,6 +88,10 @@ const logout = async (refreshToken) => {
     throw new Error(errorMessages.USER_NOT_FOUND);
   }
 
+  if (!user.refreshTokens.includes(refreshToken)) {
+    throw new Error(errorMessages.INVALID_TOKEN);
+  }
+
   await userRepository.removeRefreshToken(userId, refreshToken);
 };
 
