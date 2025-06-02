@@ -10,4 +10,6 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=development
+    env_file:
+      - .env
     command: npm run start
