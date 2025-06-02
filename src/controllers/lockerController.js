@@ -1,19 +1,26 @@
 const { StatusCodes } = require('http-status-codes');
 const lockerService = require('../services/lockerService');
-const { LOCKER_NOT_FOUND } = require('../constants/errorMessages');
+const {
+  LOCKER_NOT_FOUND,
+  INVALID_INPUT
+} = require('../constants/errorMessages');
 
 const createLocker = async (req, res) => {
   try {
     const locker = await lockerService.createLocker(req.body);
     res.status(StatusCodes.CREATED).json(locker);
   } catch (error) {
-    res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
+    res.status(StatusCodes.BAD_REQUEST).json({ error: INVALID_INPUT });
   }
 };
 
 const getAllLockers = async (req, res) => {
-  const lockers = await lockerService.getAllLockers();
-  res.status(StatusCodes.OK).json(lockers);
+  try {
+    const lockers = await lockerService.getAllLockers();
+    res.status(StatusCodes.OK).json(lockers);
+  } catch (error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
+  }
 };
 
 const getLockerById = async (req, res) => {
