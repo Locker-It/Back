@@ -19,4 +19,7 @@ const availableLockerSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model('AvailableLocker', availableLockerSchema);
+const AvailableLocker = mongoose.model('AvailableLocker', availableLockerSchema);
+
+module.exports = AvailableLocker;
+

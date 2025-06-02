@@ -1,22 +1,25 @@
-const service = require('../services/availableLockerService');
 const { StatusCodes } = require('http-status-codes');
 const { AVAILABLE_LOCKER_NOT_FOUND } = require('../constants/errorMessages');
 
-const create = async (req, res) => {
+const createAvailableLocker = async (req, res) => {
   try {
     const newLocker = await service.create(req.body);
     res.status(StatusCodes.CREATED).json(newLocker);
   } catch (error) {
-    res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
   }
 };
 
-const getAll = async (req, res) => {
-  const lockers = await service.getAll();
-  res.status(StatusCodes.OK).json(lockers);
+const getAllAvailableLockers = async (req, res) => {
+  try {
+    const lockers = await service.getAll();
+    res.status(StatusCodes.OK).json(lockers);
+  } catch (error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
+  }
 };
 
-const getById = async (req, res) => {
+const getAvailableLockerById = async (req, res) => {
   try {
     const locker = await service.getById(req.params.id);
     res.status(StatusCodes.OK).json(locker);
@@ -25,7 +28,7 @@ const getById = async (req, res) => {
   }
 };
 
-const update = async (req, res) => {
+const updateAvailableLocker = async (req, res) => {
   try {
     const updated = await service.update(req.params.id, req.body);
     res.status(StatusCodes.OK).json(updated);
@@ -34,7 +37,7 @@ const update = async (req, res) => {
   }
 };
 
-const remove = async (req, res) => {
+const removeAvailableLocker = async (req, res) => {
   try {
     await service.remove(req.params.id);
     res.status(StatusCodes.NO_CONTENT).send();
@@ -44,9 +47,9 @@ const remove = async (req, res) => {
 };
 
 module.exports = {
-  create,
-  getAll,
-  getById,
-  update,
-  remove,
+  createAvailableLocker,
+  getAllAvailableLockers,
+  getAvailableLockerById,
+  updateAvailableLocker,
+  removeAvailableLocker,
 };
