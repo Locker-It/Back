@@ -14,6 +14,20 @@ const generateToken = (user, type) => {
   return jwt.sign(payload, secret, { expiresIn: config.expiresIn });
 };
 
+const verifyToken = (token, secretKey) => {
+  try {
+    return jwt.verify(token, secretKey);
+  } catch (err) {
+    if (err.name === errorMessages.TOKEN_EXPIRED_ERROR) {
+      throw new Error(errorMessages.TOKEN_EXPIRED_ERROR);
+    }
+    if (err.name === errorMessages.JSON_WEB_TOKEN_ERROR) {
+      throw new Error(errorMessages.MALFORMED_TOKEN);
+    }
+    throw new Error(errorMessages.INVALID_TOKEN);
+  }
+};
+
 const registerUser = async ({ name, email, username, password }) => {
   const existingUser = await userRepository.findByUsername(username);
   if (existingUser) {
@@ -49,23 +63,15 @@ const loginUser = async ({ username, password }) => {
 };
 
 const validateRefreshToken = async (token) => {
-  try {
-    const decoded = jwt.verify(token, process.env[auth.JWT_REFRESH_SECRET_KEY]);
-    const userId = decoded[auth.TOKEN_PAYLOAD_KEY];
-    const user = await userRepository.getUserById(userId);
+  const decoded = verifyToken(token, process.env[auth.JWT_REFRESH_SECRET_KEY]);
+  const userId = decoded[auth.TOKEN_PAYLOAD_KEY];
+  const user = await userRepository.getUserById(userId);
 
-    if (
-      !user ||
-      !Array.isArray(user.refreshTokens) ||
-      !user.refreshTokens.includes(token)
-    ) {
-      throw new Error(errorMessages.INVALID_TOKEN);
-    }
-
-    return user;
-  } catch (err) {
+  if (!user || !Array.isArray(user.refreshTokens) || !user.refreshTokens.includes(token)) {
     throw new Error(errorMessages.INVALID_TOKEN);
   }
+
+  return user;
 };
 
 const refreshAccessToken = async (refreshToken) => {
@@ -74,22 +80,15 @@ const refreshAccessToken = async (refreshToken) => {
 };
 
 const logout = async (refreshToken) => {
-  try {
-    const decoded = jwt.verify(refreshToken, process.env[auth.JWT_REFRESH_SECRET_KEY],);
-    const userId = decoded[auth.TOKEN_PAYLOAD_KEY];
-    const user = await userRepository.getUserById(userId);
+  const decoded = verifyToken(refreshToken, process.env[auth.JWT_REFRESH_SECRET_KEY]);
+  const userId = decoded[auth.TOKEN_PAYLOAD_KEY];
+  const user = await userRepository.getUserById(userId);
 
-    if (!user) {
-      throw new Error(errorMessages.USER_NOT_FOUND);
-    }
-
-    await userRepository.removeRefreshToken(userId, refreshToken);
-  } catch (err) {
-    if (err.name === errorMessages.JSON_WEB_TOKEN_ERROR || err.name === errorMessages.TOKEN_EXPIRED_ERROR) {
-      throw new Error(errorMessages.INVALID_TOKEN);
-    }
-    throw err;
+  if (!user) {
+    throw new Error(errorMessages.USER_NOT_FOUND);
   }
+
+  await userRepository.removeRefreshToken(userId, refreshToken);
 };
 
 module.exports = {

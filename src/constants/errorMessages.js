@@ -12,5 +12,6 @@ module.exports = {
   MISSING_REFRESH_TOKEN: 'Missing refresh token',
   INVALID_TOKEN_TYPE: 'Invalid token type',
   JSON_WEB_TOKEN_ERROR: 'JsonWebTokenError',
-  TOKEN_EXPIRED_ERROR: 'TokenExpiredError'
+  TOKEN_EXPIRED_ERROR: 'TokenExpiredError',
+  MALFORMED_TOKEN: 'Malformed token',
 };

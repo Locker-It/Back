@@ -87,7 +87,10 @@ const logoutUser = async (req, res) => {
 
     await authService.logout(refreshToken);
     return res.status(StatusCodes.OK).json({ message: USER_LOGOUT_SUCCESS });
-  } catch (error) {
+  }  catch (error) {
+    if (error.message === USER_NOT_FOUND ) {
+      return res.status(StatusCodes.NOT_FOUND).json({ error: error.message });
+    }
     return res.status(StatusCodes.UNAUTHORIZED).json({ error: error.message });
   }
 };
