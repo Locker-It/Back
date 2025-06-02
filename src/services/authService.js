@@ -82,8 +82,22 @@ const refreshAccessToken = async (refreshToken) => {
   return generateAccessToken(user);
 };
 
+const logout = async (refreshToken) => {
+  const decoded = jwt.verify(refreshToken, process.env[auth.JWT_REFRESH_SECRET_KEY]);
+  const userId = decoded[auth.TOKEN_PAYLOAD_KEY];
+  const user = await userRepository.getUserById(userId);
+
+  if (!user) {
+    throw new Error(errorMessages.USER_NOT_FOUND);
+  }
+
+  const updatedTokens = user.refreshTokens.filter(token => token !== refreshToken);
+  await userRepository.updateUser(userId, { refreshTokens: updatedTokens });
+};
+
 module.exports = {
   registerUser,
   loginUser,
   refreshAccessToken,
+  logout,
 };
