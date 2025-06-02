@@ -18,10 +18,10 @@ const verifyToken = (token, secretKey) => {
   try {
     return jwt.verify(token, secretKey);
   } catch (err) {
-    if (err.name === errorMessages.TOKEN_EXPIRED_ERROR) {
+    if (err instanceof jwt.TokenExpiredError) {
       throw new Error(errorMessages.TOKEN_EXPIRED_ERROR);
     }
-    if (err.name === errorMessages.JSON_WEB_TOKEN_ERROR) {
+    if (err instanceof jwt.JsonWebTokenError) {
       throw new Error(errorMessages.MALFORMED_TOKEN);
     }
     throw new Error(errorMessages.INVALID_TOKEN);
