@@ -1,7 +1,7 @@
 const { StatusCodes } = require('http-status-codes');
 const userService = require('../services/userService');
 const { USER_NOT_FOUND, INVALID_INPUT,MISSING_REFRESH_TOKEN } = require('../constants/errorMessages');
-const { USER_REGISTERED_SUCCESS } = require('../constants/userStatuses');
+const { USER_REGISTERED_SUCCESS,USER_LOGOUT_SUCCESS } = require('../constants/userStatuses');
 const authService = require('../services/authService');
 
 const createUser = async (req, res) => {
@@ -78,6 +78,19 @@ const refreshTokenController = async (req, res) => {
   }
 };
 
+const logoutUser = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: MISSING_REFRESH_TOKEN });
+    }
+
+    await authService.logout(refreshToken);
+    return res.status(StatusCodes.OK).json({ message: USER_LOGOUT_SUCCESS });
+  } catch (error) {
+    return res.status(StatusCodes.UNAUTHORIZED).json({ error: error.message });
+  }
+};
 
 module.exports = {
   createUser,
@@ -88,4 +101,5 @@ module.exports = {
   registerUser,
   loginUser,
   refreshToken: refreshTokenController,
+  logoutUser,
 };

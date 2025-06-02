@@ -12,4 +12,5 @@ module.exports = {
   LOGIN: '/login',
   AUTH_BASE: '/auth',
   REFRESH: '/refresh',
+  LOGOUT: '/logout',
 };
