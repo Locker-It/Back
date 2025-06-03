@@ -1,9 +1,32 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const userRepository = require('../repositories/userRepository');
-const auth = require('../constants/auth');
+const { auth, tokenConfigs, tokenType } = require('../constants/auth');
 const errorMessages = require('../constants/errorMessages');
 const { NUMERIC } = require('../constants/numeric');
+
+const generateToken = (user, type) => {
+  const config = tokenConfigs[type];
+  if (!config) throw new Error(errorMessages.INVALID_TOKEN_TYPE);
+
+  const payload = config.payload(user);
+  const secret = process.env[config.secretKey];
+  return jwt.sign(payload, secret, { expiresIn: config.expiresIn });
+};
+
+const verifyToken = (token, secretKey) => {
+  try {
+    return jwt.verify(token, secretKey);
+  } catch (err) {
+    if (err instanceof jwt.TokenExpiredError) {
+      throw new Error(errorMessages.TOKEN_EXPIRED_ERROR);
+    }
+    if (err instanceof jwt.JsonWebTokenError) {
+      throw new Error(errorMessages.MALFORMED_TOKEN);
+    }
+    throw new Error(errorMessages.INVALID_TOKEN);
+  }
+};
 
 const registerUser = async ({ name, email, username, password }) => {
   const existingUser = await userRepository.findByUsername(username);
@@ -12,14 +35,12 @@ const registerUser = async ({ name, email, username, password }) => {
   }
 
   const hashedPassword = await bcrypt.hash(password, NUMERIC.SALT_ROUNDS);
-  const newUser = await userRepository.createUser({
+  return userRepository.createUser({
     name,
     email,
     username,
     password: hashedPassword,
   });
-
-  return newUser;
 };
 
 const loginUser = async ({ username, password }) => {
@@ -33,20 +54,50 @@ const loginUser = async ({ username, password }) => {
     throw new Error(errorMessages.INVALID_CREDENTIALS);
   }
 
-  const token = jwt.sign(
-    {
-      [auth.TOKEN_PAYLOAD_KEY]: user._id,
-      role: user.role,
-    },
-    process.env[auth.JWT_SECRET_KEY],
-    {
-      expiresIn: auth.TOKEN_EXPIRES_TIME,
-    },
-  );
-  return token;
+  const accessToken = generateToken(user, tokenType.ACCESS);
+  const refreshToken = generateToken(user, tokenType.REFRESH);
+
+  await userRepository.addRefreshToken(user._id, refreshToken);
+
+  return { accessToken, refreshToken };
+};
+
+const validateRefreshToken = async (token) => {
+  const decoded = verifyToken(token, process.env[auth.JWT_REFRESH_SECRET_KEY]);
+  const userId = decoded[auth.TOKEN_PAYLOAD_KEY];
+  const user = await userRepository.getUserById(userId);
+
+  if (!user || !Array.isArray(user.refreshTokens) || !user.refreshTokens.includes(token)) {
+    throw new Error(errorMessages.INVALID_TOKEN);
+  }
+
+  return user;
+};
+
+const refreshAccessToken = async (refreshToken) => {
+  const user = await validateRefreshToken(refreshToken);
+  return generateToken(user, tokenType.ACCESS);
+};
+
+const logout = async (refreshToken) => {
+  const decoded = verifyToken(refreshToken, process.env[auth.JWT_REFRESH_SECRET_KEY]);
+  const userId = decoded[auth.TOKEN_PAYLOAD_KEY];
+  const user = await userRepository.getUserById(userId);
+
+  if (!user) {
+    throw new Error(errorMessages.USER_NOT_FOUND);
+  }
+
+  if (!user.refreshTokens.includes(refreshToken)) {
+    throw new Error(errorMessages.INVALID_TOKEN);
+  }
+
+  await userRepository.removeRefreshToken(userId, refreshToken);
 };
 
 module.exports = {
   registerUser,
   loginUser,
+  refreshAccessToken,
+  logout,
 };
