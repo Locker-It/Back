@@ -3,7 +3,7 @@ const MODEL_NAMES = require('../constants/modelNames');
 
 const lockerSchema = new mongoose.Schema(
   {
-    id: {
+    lockerNumber: {
       type: Number,
       required: true,
       unique: true,
