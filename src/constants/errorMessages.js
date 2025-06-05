@@ -14,4 +14,6 @@ module.exports = {
   JSON_WEB_TOKEN_ERROR: 'JsonWebTokenError',
   TOKEN_EXPIRED_ERROR: 'TokenExpiredError',
   MALFORMED_TOKEN: 'Malformed token',
+  LOCKER_NOT_FOUND: 'Locker not found',
+  UNKNOWN_ERROR: 'An unknown error occurred',
 };
