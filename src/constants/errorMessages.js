@@ -16,4 +16,5 @@ module.exports = {
   MALFORMED_TOKEN: 'Malformed token',
   LOCKER_NOT_FOUND: 'Locker not found',
   UNKNOWN_ERROR: 'An unknown error occurred',
+  AVAILABLE_LOCKER_NOT_FOUND:'Available locker not found',
 };
