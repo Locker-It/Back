@@ -16,4 +16,7 @@ module.exports = {
   LOCKERS: '/',
   LOCKER_ID: '/:id',
   LOCKERS_BASE: '/lockers',
+  AVAILABLE_LOCKERS_BASE: '/available-lockers',
+  AVAILABLE_LOCKERS: '/',
+  AVAILABLE_LOCKER_ID: '/:id',
 };
