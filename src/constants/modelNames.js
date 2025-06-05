@@ -3,4 +3,5 @@ module.exports = {
   PRODUCT: 'Product',
   PURCHASE: 'Purchase',
   LOCKER: 'Locker',
+  AVAILABLE_LOCKER: 'AvailableLocker',
 };
