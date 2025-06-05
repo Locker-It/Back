@@ -13,4 +13,7 @@ module.exports = {
   AUTH_BASE: '/auth',
   REFRESH: '/refresh',
   LOGOUT: '/logout',
+  LOCKERS: '/',
+  LOCKER_ID: '/:id',
+  LOCKERS_BASE: '/lockers',
 };
