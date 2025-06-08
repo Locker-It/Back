@@ -36,11 +36,17 @@ const COOKIE_NAMES = {
   REFRESH_TOKEN_COOKIE_SAME_SITE: 'Strict',
 };
 
-
 const REFRESH_TOKEN_COOKIE_OPTIONS = {
   httpOnly: true,
   secure: !IS_DEV,
   sameSite: COOKIE_NAMES.REFRESH_TOKEN_COOKIE_SAME_SITE,
   path: `${AUTH_BASE}${REFRESH}`,
 };
-module.exports = { auth, tokenConfigs, tokenType,COOKIE_NAMES, REFRESH_TOKEN_COOKIE_OPTIONS };
+module.exports = {
+  auth,
+  tokenConfigs,
+  tokenType,
+  COOKIE_NAMES,
+  REFRESH_TOKEN_COOKIE_OPTIONS,
+  REFRESH_TOKEN: COOKIE_NAMES.REFRESH_TOKEN,
+};
