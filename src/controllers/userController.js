@@ -93,7 +93,7 @@ const logoutUser = async (req, res) => {
     const { refreshToken } = req.cookies;
     if (!refreshToken) {
       return res
-        .status(StatusCodes.BAD_REQUEST)
+        .status(StatusCodes.UNAUTHORIZED)
         .json({ error: MISSING_REFRESH_TOKEN });
     }
 
