@@ -4,6 +4,7 @@ const api = require('./routes/apiRouter');
 const setupSwagger = require('./config/swagger');
 const { IS_DEV } = require('./constants/env');
 
+require('dotenv').config();
 
 const app = express();
 app.use(cors());
