@@ -1,8 +1,18 @@
 const { StatusCodes } = require('http-status-codes');
 const userService = require('../services/userService');
-const { USER_NOT_FOUND, INVALID_INPUT,MISSING_REFRESH_TOKEN } = require('../constants/errorMessages');
-const { USER_REGISTERED_SUCCESS,USER_LOGOUT_SUCCESS } = require('../constants/userStatuses');
+const {
+  USER_NOT_FOUND,
+  INVALID_INPUT,
+  MISSING_REFRESH_TOKEN,
+} = require('../constants/errorMessages');
+const {
+  USER_REGISTERED_SUCCESS,
+  USER_LOGOUT_SUCCESS,
+} = require('../constants/userStatuses');
 const authService = require('../services/authService');
+const { AUTH_BASE, REFRESH } = require('../constants/apiPaths');
+const { REFRESH_TOKEN,REFRESH_TOKEN_COOKIE_SAME_SITE } = require('../constants/auth');
+const { IS_DEV } = require('../constants/env');
 
 const createUser = async (req, res) => {
   try {
@@ -58,18 +68,25 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   try {
     const { accessToken, refreshToken } = await authService.loginUser(req.body);
-    res.status(StatusCodes.OK).json({ accessToken, refreshToken });
+    res.cookie(REFRESH_TOKEN, refreshToken, {
+      httpOnly: true,
+      secure: !IS_DEV,
+      sameSite: REFRESH_TOKEN_COOKIE_SAME_SITE,
+      path: `${AUTH_BASE}${REFRESH}`,
+    });
+    res.status(StatusCodes.OK).json({ accessToken });
   } catch (error) {
     res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
   }
 };
 
-
 const refreshTokenController = async (req, res) => {
   try {
-    const { refreshToken } = req.body;
+    const { refreshToken } = req.cookies;
     if (!refreshToken) {
-      return res.status(StatusCodes.UNAUTHORIZED).json({ error: MISSING_REFRESH_TOKEN });
+      return res
+        .status(StatusCodes.UNAUTHORIZED)
+        .json({ error: MISSING_REFRESH_TOKEN });
     }
     const accessToken = await authService.refreshAccessToken(refreshToken);
     return res.status(StatusCodes.OK).json({ accessToken });
@@ -80,15 +97,21 @@ const refreshTokenController = async (req, res) => {
 
 const logoutUser = async (req, res) => {
   try {
-    const { refreshToken } = req.body;
+    const { refreshToken } = req.cookies;
     if (!refreshToken) {
-      return res.status(StatusCodes.BAD_REQUEST).json({ error: MISSING_REFRESH_TOKEN });
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: MISSING_REFRESH_TOKEN });
     }
 
     await authService.logout(refreshToken);
+
+    res.clearCookie(REFRESH_TOKEN, {
+      path:`${AUTH_BASE}${REFRESH}`,
+    });
     return res.status(StatusCodes.OK).json({ message: USER_LOGOUT_SUCCESS });
-  }  catch (error) {
-    if (error.message === USER_NOT_FOUND ) {
+  } catch (error) {
+    if (error.message === USER_NOT_FOUND) {
       return res.status(StatusCodes.NOT_FOUND).json({ error: error.message });
     }
     return res.status(StatusCodes.UNAUTHORIZED).json({ error: error.message });

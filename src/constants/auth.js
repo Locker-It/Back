@@ -28,5 +28,9 @@ const tokenType = {
   ACCESS: 'access',
   REFRESH: 'refresh',
 };
+const COOKIE_NAMES = {
+  REFRESH_TOKEN: 'refreshToken',
+  REFRESH_TOKEN_COOKIE_SAME_SITE: 'Strict',
+};
 
-module.exports = { auth, tokenConfigs, tokenType };
+module.exports = { auth, tokenConfigs, tokenType,COOKIE_NAMES };
