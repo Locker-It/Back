@@ -4,6 +4,7 @@ const { PURCHASE_NOT_FOUND, INVALID_INPUT,PURCHASES_FETCH_FAILED } = require('..
 
 const createPurchase = async (req, res) => {
   try {
+    // todo: validate if user exists
     const purchase = await purchaseService.createPurchase(req.body);
     res.status(StatusCodes.CREATED).json(purchase);
   } catch (error) {
