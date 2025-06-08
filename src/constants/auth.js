@@ -40,7 +40,7 @@ const REFRESH_TOKEN_COOKIE_OPTIONS = {
   httpOnly: true,
   secure: !IS_DEV,
   sameSite: COOKIE_NAMES.REFRESH_TOKEN_COOKIE_SAME_SITE,
-  path: `${AUTH_BASE}${REFRESH}`,
+  path: AUTH_BASE,
 };
 module.exports = {
   auth,
