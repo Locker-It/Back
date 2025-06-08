@@ -9,7 +9,11 @@ const auth = {
 
 const tokenConfigs = {
   access: {
-    payload: (user) => ({ [auth.TOKEN_PAYLOAD_KEY]: user._id, role: user.role }),
+    payload: (user) => ({
+      [auth.TOKEN_PAYLOAD_KEY]: user._id,
+      username: user.username,
+      role: user.role,
+    }),
     secretKey: auth.JWT_ACCESS_SECRET_KEY,
     expiresIn: auth.ACCESS_TOKEN_EXPIRES_TIME,
   },
@@ -20,9 +24,9 @@ const tokenConfigs = {
   },
 };
 
- const tokenType = {
+const tokenType = {
   ACCESS: 'access',
-  REFRESH: 'refresh'
+  REFRESH: 'refresh',
 };
 
-module.exports = { auth, tokenConfigs,tokenType };
+module.exports = { auth, tokenConfigs, tokenType };
