@@ -1,13 +1,13 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 const api = require('./routes/apiRouter');
 const setupSwagger = require('./config/swagger');
 const { IS_DEV } = require('./constants/env');
 
 
-dotenv.config();
+
 
 const app = express();
 const corsOptions = {
