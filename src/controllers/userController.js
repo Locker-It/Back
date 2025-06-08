@@ -10,9 +10,7 @@ const {
   USER_LOGOUT_SUCCESS,
 } = require('../constants/userStatuses');
 const authService = require('../services/authService');
-const { AUTH_BASE, REFRESH } = require('../constants/apiPaths');
-const { REFRESH_TOKEN,REFRESH_TOKEN_COOKIE_SAME_SITE } = require('../constants/auth');
-const { IS_DEV } = require('../constants/env');
+const { REFRESH_TOKEN, REFRESH_TOKEN_COOKIE_OPTIONS } = require('../constants/auth');
 
 const createUser = async (req, res) => {
   try {
@@ -68,12 +66,7 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   try {
     const { accessToken, refreshToken } = await authService.loginUser(req.body);
-    res.cookie(REFRESH_TOKEN, refreshToken, {
-      httpOnly: true,
-      secure: !IS_DEV,
-      sameSite: REFRESH_TOKEN_COOKIE_SAME_SITE,
-      path: `${AUTH_BASE}${REFRESH}`,
-    });
+    res.cookie(REFRESH_TOKEN, refreshToken, REFRESH_TOKEN_COOKIE_OPTIONS);
     res.status(StatusCodes.OK).json({ accessToken });
   } catch (error) {
     res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
@@ -106,9 +99,7 @@ const logoutUser = async (req, res) => {
 
     await authService.logout(refreshToken);
 
-    res.clearCookie(REFRESH_TOKEN, {
-      path:`${AUTH_BASE}${REFRESH}`,
-    });
+    res.clearCookie(REFRESH_TOKEN, REFRESH_TOKEN_COOKIE_OPTIONS);
     return res.status(StatusCodes.OK).json({ message: USER_LOGOUT_SUCCESS });
   } catch (error) {
     if (error.message === USER_NOT_FOUND) {
