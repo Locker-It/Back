@@ -1,5 +1,5 @@
 const { IS_DEV } = require('./env');
-const { AUTH_BASE, REFRESH } = require('./apiPaths');
+const { AUTH_BASE } = require('./apiPaths');
 
 const auth = {
   TOKEN_PAYLOAD_KEY: 'userId',
