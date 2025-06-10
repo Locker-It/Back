@@ -1,5 +1,5 @@
 const { IS_DEV } = require('./env');
-const { AUTH_BASE } = require('./apiPaths');
+const { HOME } = require('./apiPaths');
 
 const auth = {
   TOKEN_PAYLOAD_KEY: 'userId',
@@ -40,8 +40,9 @@ const REFRESH_TOKEN_COOKIE_OPTIONS = {
   httpOnly: true,
   secure: !IS_DEV,
   sameSite: COOKIE_NAMES.REFRESH_TOKEN_COOKIE_SAME_SITE,
-  path: AUTH_BASE,
+  path: HOME,
 };
+
 module.exports = {
   auth,
   tokenConfigs,
