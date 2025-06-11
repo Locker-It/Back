@@ -1,3 +1,6 @@
+const { IS_DEV } = require('./env');
+const { HOME } = require('./apiPaths');
+
 const auth = {
   TOKEN_PAYLOAD_KEY: 'userId',
   ACCESS_TOKEN_EXPIRES_TIME: '1h',
@@ -28,5 +31,23 @@ const tokenType = {
   ACCESS: 'access',
   REFRESH: 'refresh',
 };
+const COOKIE_NAMES = {
+  REFRESH_TOKEN: 'refreshToken',
+  REFRESH_TOKEN_COOKIE_SAME_SITE: 'Strict',
+};
 
-module.exports = { auth, tokenConfigs, tokenType };
+const REFRESH_TOKEN_COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: !IS_DEV,
+  sameSite: COOKIE_NAMES.REFRESH_TOKEN_COOKIE_SAME_SITE,
+  path: HOME,
+};
+
+module.exports = {
+  auth,
+  tokenConfigs,
+  tokenType,
+  COOKIE_NAMES,
+  REFRESH_TOKEN_COOKIE_OPTIONS,
+  REFRESH_TOKEN: COOKIE_NAMES.REFRESH_TOKEN,
+};

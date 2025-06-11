@@ -19,4 +19,5 @@ module.exports = {
   AVAILABLE_LOCKERS_BASE: '/available-lockers',
   AVAILABLE_LOCKERS: '/',
   AVAILABLE_LOCKER_ID: '/:id',
+  HOME: '/',
 };
