@@ -33,7 +33,7 @@ const deleteUser = async (id) => {
 function isDuplicateEmailError(error) {
   return (
     error.code === MONGO_ERROR_STATUS &&
-    (error.message?.includes(DUPLICATE_EMAIL_FIELD) || error.keyValue?.[DUPLICATE_EMAIL_FIELD])
+    (error.keyPattern?.[DUPLICATE_EMAIL_FIELD] || error.keyValue?.[DUPLICATE_EMAIL_FIELD])
   );
 }
 
