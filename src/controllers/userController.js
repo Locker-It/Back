@@ -4,13 +4,18 @@ const {
   USER_NOT_FOUND,
   INVALID_INPUT,
   MISSING_REFRESH_TOKEN,
+  EMAIL_EXISTS,
 } = require('../constants/errorMessages');
 const {
   USER_REGISTERED_SUCCESS,
   USER_LOGOUT_SUCCESS,
 } = require('../constants/userStatuses');
 const authService = require('../services/authService');
-const { REFRESH_TOKEN, REFRESH_TOKEN_COOKIE_OPTIONS } = require('../constants/auth');
+const {
+  REFRESH_TOKEN,
+  REFRESH_TOKEN_COOKIE_OPTIONS,
+} = require('../constants/auth');
+const { isDuplicateEmailError } = require('../services/userService');
 
 const createUser = async (req, res) => {
   try {
@@ -57,9 +62,14 @@ const deleteUser = async (req, res) => {
 const registerUser = async (req, res) => {
   try {
     await authService.registerUser(req.body);
-    res.status(StatusCodes.CREATED).json({ message: USER_REGISTERED_SUCCESS });
+    return res
+      .status(StatusCodes.CREATED)
+      .json({ message: USER_REGISTERED_SUCCESS });
   } catch (error) {
-    res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
+    if (isDuplicateEmailError(error)) {
+      return res.status(StatusCodes.CONFLICT).json({ error: EMAIL_EXISTS });
+    }
+    return res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
   }
 };
 
