@@ -1,5 +1,6 @@
 const userRepository = require('../repositories/userRepository');
 const { USER_NOT_FOUND } = require('../constants/errorMessages');
+const { MONGO_ERROR_STATUS, DUPLICATE_EMAIL_FIELD } = require('../constants/service.constant');
 
 const createUser = async (userData) => userRepository.createUser(userData);
 
@@ -29,10 +30,18 @@ const deleteUser = async (id) => {
   return deletedUser;
 };
 
+function isDuplicateEmailError(error) {
+  return (
+    error.code === MONGO_ERROR_STATUS &&
+    (error.keyPattern?.[DUPLICATE_EMAIL_FIELD] || error.keyValue?.[DUPLICATE_EMAIL_FIELD])
+  );
+}
+
 module.exports = {
   createUser,
   getAllUsers,
   getUserById,
   updateUser,
   deleteUser,
+  isDuplicateEmailError
 };
