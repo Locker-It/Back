@@ -1,5 +1,15 @@
+const { isFunction } = require('../constants/types');
+
 const normalizeDoc = (doc) => {
-  const obj = doc.toObject ? doc.toObject() : doc;
+  const getObject = () => {
+    try {
+      return isFunction(doc.toObject) ? doc.toObject() : doc;
+    } catch (e) {
+      return doc;
+    }
+  };
+
+  const obj = getObject();
   const { _id, ...rest } = obj;
   return { id: _id.toString(), ...rest };
 };
