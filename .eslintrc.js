@@ -4,6 +4,9 @@ module.exports = {
     jest: true,
     node: true,
   },
+  parserOptions: {
+    ecmaVersion: 2020,
+  },
   extends: ['airbnb-base', 'prettier'],
   rules: {
     'no-underscore-dangle': 0,
