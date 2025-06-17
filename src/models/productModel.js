@@ -35,6 +35,15 @@ const productSchema = new mongoose.Schema(
       ref: MODEL_NAMES.USER,
       required: true,
     },
+    reservedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: MODEL_NAMES.USER,
+      default: null,
+    },
+    reservedAt: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true },
 );

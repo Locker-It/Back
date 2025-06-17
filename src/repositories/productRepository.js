@@ -14,10 +14,13 @@ const updateProduct = (id, updateData) =>
 
 const deleteProduct = (id) => Product.findByIdAndDelete(id);
 
+const findProductByFilters = (filters) => Product.find(filters);
+
 module.exports = {
   createProduct,
   getAllProducts,
   getProductById,
   updateProduct,
   deleteProduct,
+  findProductByFilters,
 };
