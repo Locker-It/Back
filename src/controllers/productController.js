@@ -1,11 +1,12 @@
 const { StatusCodes } = require('http-status-codes');
 const productService = require('../services/productService');
 const { PRODUCT_NOT_FOUND, INVALID_INPUT } = require('../constants/errorMessages');
+const { normalizeDoc, normalizeMany } = require('../utils/normalize');
 
 const createProduct = async (req, res) => {
   try {
     const product = await productService.createProduct(req.body);
-    res.status(StatusCodes.CREATED).json(product);
+    res.status(StatusCodes.CREATED).json(normalizeDoc(product));
   } catch (error) {
     res.status(StatusCodes.BAD_REQUEST).json({ error: INVALID_INPUT });
   }
@@ -13,13 +14,13 @@ const createProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   const products = await productService.getAllProducts();
-  res.status(StatusCodes.OK).json(products);
+  res.status(StatusCodes.OK).json(normalizeMany(products));
 };
 
 const getProductById = async (req, res) => {
   try {
     const product = await productService.getProductById(req.params.id);
-    res.status(StatusCodes.OK).json(product);
+    res.status(StatusCodes.OK).json(normalizeDoc(product));
   } catch (error) {
     res.status(StatusCodes.NOT_FOUND).json({ error: PRODUCT_NOT_FOUND });
   }
@@ -28,7 +29,7 @@ const getProductById = async (req, res) => {
 const updateProduct = async (req, res) => {
   try {
     const product = await productService.updateProduct(req.params.id, req.body);
-    res.status(StatusCodes.OK).json(product);
+    res.status(StatusCodes.OK).json(normalizeDoc(product));
   } catch (error) {
     res.status(StatusCodes.NOT_FOUND).json({ error: PRODUCT_NOT_FOUND });
   }
