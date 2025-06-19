@@ -5,7 +5,9 @@ const productStatuses = require('../constants/productStatuses');
 const createProduct = async (productData) =>
   productRepository.createProduct(productData);
 
-const getAllProducts = async () => productRepository.getAllProducts();
+const getAllProducts = async (filters = {}) => {
+  return productRepository.findProductByFilters(filters);
+};
 
 const getProductById = async (id) => {
   const product = await productRepository.getProductById(id);
@@ -15,8 +17,12 @@ const getProductById = async (id) => {
   return product;
 };
 
-const updateProduct = async (id, updateData) => {
-  const updatedProduct = await productRepository.updateProduct(id, updateData);
+const updateProduct = async (id, updateData, filter = {}) => {
+  const updatedProduct = await productRepository.updateProduct(
+    id,
+    updateData,
+    filter,
+  );
   if (!updatedProduct) {
     throw new Error(PRODUCT_NOT_FOUND);
   }

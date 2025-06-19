@@ -17,4 +17,12 @@ module.exports = {
   LOCKER_NOT_FOUND: 'Locker not found',
   UNKNOWN_ERROR: 'An unknown error occurred',
   AVAILABLE_LOCKER_NOT_FOUND: 'Available locker not found',
+  EMAIL_EXISTS: 'Email already exists',
+  FAILED_TO_FETCH_PRODUCTS: 'Failed to fetch products:',
+  PRODUCT_ALREADY_RESERVED: 'Product was just reserved by another user.',
+  FAILED_TO_ADD_TO_CART: 'Failed to add to cart',
+  FAILED_TO_FETCH_CART: 'Failed to fetch cart',
+  NOT_YOUR_CART_ITEM: 'Not your cart item',
+  FAILED_TO_UPDATE_PRODUCTS: 'Failed to update product',
+  FAILED_TO_REMOVE_FROM_CART: 'Failed to remove from cart',
 };

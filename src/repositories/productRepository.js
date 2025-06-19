@@ -6,11 +6,12 @@ const getAllProducts = () => Product.find();
 
 const getProductById = (id) => Product.findById(id);
 
-const updateProduct = (id, updateData) =>
-  Product.findByIdAndUpdate(id, updateData, {
-    new: true,
-    runValidators: true,
-  });
+const updateProduct = (id, updateData, filter = {}) =>
+  Product.findOneAndUpdate(
+    { _id: id, ...filter }, 
+    updateData,
+    { new: true, runValidators: true },
+  );
 
 const deleteProduct = (id) => Product.findByIdAndDelete(id);
 

@@ -6,7 +6,7 @@ const { LOGIN, REGISTER,REFRESH,LOGOUT } = require('../constants/apiPaths');
 
 router.post(REGISTER, userController.registerUser);
 router.post(LOGIN, userController.loginUser);
-router.post(REFRESH, userController.refreshToken);
+router.get(REFRESH, userController.refreshToken);
 router.post(LOGOUT, userController.logoutUser);
 
 module.exports = router;
