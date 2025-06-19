@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 const { USERS, USER_ID } = require('../constants/apiPaths');
-const authenticate = require('../middleware/auth');
+const authenticate = require('../middleware/authMiddleware');
 const authorizeAdmin = require('../middleware/authorizeAdmin');
 
 router.get(USERS, userController.getAllUsers);

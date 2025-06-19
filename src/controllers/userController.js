@@ -77,6 +77,7 @@ const loginUser = async (req, res) => {
   try {
     const { accessToken, refreshToken } = await authService.loginUser(req.body);
     res.cookie(REFRESH_TOKEN, refreshToken, REFRESH_TOKEN_COOKIE_OPTIONS);
+    res.cookie('accessToken', accessToken, REFRESH_TOKEN_COOKIE_OPTIONS);
     res.status(StatusCodes.OK).json({ accessToken });
   } catch (error) {
     res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
@@ -119,6 +120,18 @@ const logoutUser = async (req, res) => {
   }
 };
 
+const getCurrentUser = async (req, res) => {
+  try {
+    const user = await userService.getCurrentUser(req.user.userId);
+    if (!user) {
+      return res.status(StatusCodes.NOT_FOUND).json({ error: USER_NOT_FOUND });
+    }
+    return res.status(StatusCodes.OK).json(user);
+  } catch (error) {
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
+  }
+};
+
 module.exports = {
   createUser,
   getAllUsers,
@@ -129,4 +142,5 @@ module.exports = {
   loginUser,
   refreshToken: refreshTokenController,
   logoutUser,
+  getCurrentUser,
 };

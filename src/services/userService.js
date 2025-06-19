@@ -37,11 +37,22 @@ function isDuplicateEmailError(error) {
   );
 }
 
+async function getCurrentUser(userId) {
+  const user = await getUserById(userId);
+  if (!user) return null;
+  return {
+    id: user._id,
+    username: user.username,
+    role: user.role,
+  };
+}
+
 module.exports = {
   createUser,
   getAllUsers,
   getUserById,
   updateUser,
   deleteUser,
-  isDuplicateEmailError
+  isDuplicateEmailError,
+  getCurrentUser
 };
