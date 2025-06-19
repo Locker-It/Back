@@ -33,6 +33,7 @@ const tokenType = {
 };
 const COOKIE_NAMES = {
   REFRESH_TOKEN: 'refreshToken',
+  ACCESS_TOKEN: 'accessToken',
   REFRESH_TOKEN_COOKIE_SAME_SITE: 'Strict',
 };
 
@@ -50,4 +51,5 @@ module.exports = {
   COOKIE_NAMES,
   REFRESH_TOKEN_COOKIE_OPTIONS,
   REFRESH_TOKEN: COOKIE_NAMES.REFRESH_TOKEN,
+  ACCESS_TOKEN: COOKIE_NAMES.ACCESS_TOKEN,
 };
