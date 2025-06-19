@@ -20,4 +20,5 @@ module.exports = {
   AVAILABLE_LOCKERS: '/',
   AVAILABLE_LOCKER_ID: '/:id',
   HOME: '/',
+  CURRENT_USER: '/me'
 };
