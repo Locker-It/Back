@@ -13,8 +13,9 @@ const {
 const authService = require('../services/authService');
 const {
   REFRESH_TOKEN,
-  REFRESH_TOKEN_COOKIE_OPTIONS,
   ACCESS_TOKEN,
+  REFRESH_TOKEN_COOKIE_OPTIONS,
+  ACCESS_TOKEN_COOKIE_OPTIONS,
 } = require('../constants/auth');
 const { isDuplicateEmailError } = require('../services/userService');
 
@@ -81,7 +82,7 @@ const loginUser = async (req, res) => {
     );
 
     res.cookie(REFRESH_TOKEN, refreshToken, REFRESH_TOKEN_COOKIE_OPTIONS);
-    res.cookie(ACCESS_TOKEN, accessToken, REFRESH_TOKEN_COOKIE_OPTIONS);
+    res.cookie(ACCESS_TOKEN, accessToken, ACCESS_TOKEN_COOKIE_OPTIONS);
 
     return res.status(StatusCodes.OK).json({
       accessToken,
@@ -123,7 +124,7 @@ const logoutUser = async (req, res) => {
     await authService.logout(refreshToken);
 
     res.clearCookie(REFRESH_TOKEN, REFRESH_TOKEN_COOKIE_OPTIONS);
-    res.clearCookie(ACCESS_TOKEN, REFRESH_TOKEN_COOKIE_OPTIONS);
+    res.clearCookie(ACCESS_TOKEN, ACCESS_TOKEN_COOKIE_OPTIONS);
     return res.status(StatusCodes.OK).json({ message: USER_LOGOUT_SUCCESS });
   } catch (error) {
     if (error.message === USER_NOT_FOUND) {
