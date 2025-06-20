@@ -2,7 +2,13 @@ const express = require('express');
 
 const router = express.Router();
 const userController = require('../controllers/userController');
-const { LOGIN, REGISTER,REFRESH,LOGOUT, CURRENT_USER } = require('../constants/apiPaths');
+const {
+  LOGIN,
+  REGISTER,
+  REFRESH,
+  LOGOUT,
+  CURRENT_USER,
+} = require('../constants/apiPaths');
 const { getCurrentUser } = require('../controllers/userController');
 const authMiddleware = require('../middleware/authMiddleware');
 
