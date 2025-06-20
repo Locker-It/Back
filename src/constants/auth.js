@@ -1,3 +1,4 @@
+const ms = require('ms');
 const { IS_DEV } = require('./env');
 const { HOME } = require('./apiPaths');
 
@@ -43,6 +44,10 @@ const REFRESH_TOKEN_COOKIE_OPTIONS = {
   sameSite: COOKIE_NAMES.REFRESH_TOKEN_COOKIE_SAME_SITE,
   path: HOME,
 };
+const ACCESS_TOKEN_COOKIE_OPTIONS = {
+  ...REFRESH_TOKEN_COOKIE_OPTIONS,
+  maxAge: ms(auth.ACCESS_TOKEN_EXPIRES_TIME),
+};
 
 module.exports = {
   auth,
@@ -50,6 +55,7 @@ module.exports = {
   tokenType,
   COOKIE_NAMES,
   REFRESH_TOKEN_COOKIE_OPTIONS,
+  ACCESS_TOKEN_COOKIE_OPTIONS,
   REFRESH_TOKEN: COOKIE_NAMES.REFRESH_TOKEN,
   ACCESS_TOKEN: COOKIE_NAMES.ACCESS_TOKEN,
 };
