@@ -1,6 +1,15 @@
 const productRepository = require('../repositories/productRepository');
-const { PRODUCT_NOT_FOUND } = require('../constants/errorMessages');
+const {
+  PRODUCT_NOT_FOUND,
+  PRODUCT_ALREADY_RESERVED,
+} = require('../constants/errorMessages');
 const productStatuses = require('../constants/productStatuses');
+const { StatusCodes } = require('http-status-codes');
+
+const getUserCartFilter = (userId) => ({
+  status: productStatuses.PENDING,
+  reservedBy: userId,
+});
 
 const createProduct = async (productData) =>
   productRepository.createProduct(productData);
@@ -18,15 +27,18 @@ const getProductById = async (id) => {
 };
 
 const updateProduct = async (id, updateData, filter = {}) => {
-  const updatedProduct = await productRepository.updateProduct(
-    id,
-    updateData,
-    filter,
-  );
-  if (!updatedProduct) {
-    throw new Error(PRODUCT_NOT_FOUND);
+  const updated = await productRepository.updateProduct(id, updateData, filter);
+
+  if (!updated) {
+    const exists = await productRepository.getProductById(id);
+
+    const err = new Error(
+      exists ? PRODUCT_ALREADY_RESERVED : PRODUCT_NOT_FOUND,
+    );
+    err.status = exists ? StatusCodes.CONFLICT : StatusCodes.NOT_FOUND;
+    throw err;
   }
-  return updatedProduct;
+  return updated;
 };
 
 const deleteProduct = async (id) => {
@@ -37,15 +49,38 @@ const deleteProduct = async (id) => {
   return deletedProduct;
 };
 
+const addToCart = async (productId, userId) => {
+  const updatedProduct = await updateProduct(
+    productId,
+    {
+      status: productStatuses.PENDING,
+      reservedBy: userId,
+      reservedAt: new Date(),
+    },
+    {
+      status: productStatuses.AVAILABLE,
+    },
+  );
+
+  return updatedProduct;
+};
+
 const getUserCart = async (userId) => {
-  const products = await productRepository.findProductByFilters({
-    status: productStatuses.PENDING,
-    reservedBy: userId,
-  });
-  if (!products || products.length === 0) {
-    throw new Error(PRODUCT_NOT_FOUND);
-  }
-  return products;
+  return productRepository.findProductByFilters(getUserCartFilter(userId));
+};
+
+const removeFromCart = async (productId, userId) => {
+  const updatedProduct = await updateProduct(
+    productId,
+    {
+      status: productStatuses.AVAILABLE,
+      reservedBy: null,
+      reservedAt: null,
+    },
+    getUserCartFilter(userId),
+  );
+
+  return updatedProduct;
 };
 
 module.exports = {
@@ -54,5 +89,7 @@ module.exports = {
   getProductById,
   updateProduct,
   deleteProduct,
+  addToCart,
   getUserCart,
+  removeFromCart,
 };
