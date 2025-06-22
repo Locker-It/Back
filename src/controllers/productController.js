@@ -4,15 +4,13 @@ const {
   PRODUCT_NOT_FOUND,
   INVALID_INPUT,
   FAILED_TO_FETCH_PRODUCTS,
-  PRODUCT_ALREADY_RESERVED,
   FAILED_TO_ADD_TO_CART,
   FAILED_TO_FETCH_CART,
-  NOT_YOUR_CART_ITEM,
-  FAILED_TO_UPDATE_PRODUCTS,
   FAILED_TO_REMOVE_FROM_CART,
 } = require('../constants/errorMessages');
 const productStatuses = require('../constants/productStatuses');
 const { normalizeDoc, normalizeMany } = require('../utils/normalize');
+const { getUserId, getProductId } = require('../utils/request');
 
 const createProduct = async (req, res) => {
   try {
@@ -42,7 +40,8 @@ const getAllProducts = async (req, res) => {
 
 const getProductById = async (req, res) => {
   try {
-    const product = await productService.getProductById(req.params.id);
+    const productId = getProductId(req);
+    const product = await productService.getProductById(productId);
     res.status(StatusCodes.OK).json(normalizeDoc(product));
   } catch (error) {
     res.status(StatusCodes.NOT_FOUND).json({ error: PRODUCT_NOT_FOUND });
@@ -51,7 +50,8 @@ const getProductById = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   try {
-    const product = await productService.updateProduct(req.params.id, req.body);
+    const productId = getProductId(req);
+    const product = await productService.updateProduct(productId, req.body);
     res.status(StatusCodes.OK).json(normalizeDoc(product));
   } catch (error) {
     res.status(StatusCodes.NOT_FOUND).json({ error: PRODUCT_NOT_FOUND });
@@ -60,8 +60,8 @@ const updateProduct = async (req, res) => {
 
 const deleteProduct = async (req, res) => {
   try {
-    const { id } = req.params;
-    await productService.deleteProduct(id);
+    const productId = getProductId(req);
+    await productService.deleteProduct(productId);
     res.status(StatusCodes.NO_CONTENT).send();
   } catch (error) {
     res.status(StatusCodes.NOT_FOUND).json({ error: PRODUCT_NOT_FOUND });
@@ -69,37 +69,24 @@ const deleteProduct = async (req, res) => {
 };
 
 const addToCart = async (req, res) => {
-  const userId = req.user.userId;
-  const { id } = req.params;
-  try {
-    const updated = await productService.updateProduct(
-      id,
-      {
-        status: productStatuses.PENDING,
-        reservedBy: userId,
-        reservedAt: new Date(),
-      },
-      { status: productStatuses.AVAILABLE },
-    );
+  const userId = getUserId(req);
+  const productId = getProductId(req);
 
-    return res.status(StatusCodes.OK).json(normalizeDoc(updated));
-  } catch (err) {
-    if (err.message === PRODUCT_NOT_FOUND) {
-      return res
-        .status(StatusCodes.CONFLICT)
-        .json({ error: PRODUCT_ALREADY_RESERVED });
-    }
-    return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: FAILED_TO_ADD_TO_CART });
+  try {
+    const updatedProduct = await productService.addToCart(productId, userId);
+    return res.status(StatusCodes.OK).json(normalizeDoc(updatedProduct));
+  } catch (error) {
+    const status = error.status || StatusCodes.INTERNAL_SERVER_ERROR;
+    const message = error.message || FAILED_TO_ADD_TO_CART;
+    return res.status(status).json({ error: message });
   }
 };
 
 const getUserCart = async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const userId = getUserId(req);
     const cartItems = await productService.getUserCart(userId);
-    res.status(200).json(normalizeMany(cartItems));
+    res.status(StatusCodes.OK).json(normalizeMany(cartItems));
   } catch (error) {
     res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -108,32 +95,19 @@ const getUserCart = async (req, res) => {
 };
 
 const removeFromCart = async (req, res) => {
+  const userId = getUserId(req);
+  const productId = getProductId(req);
+
   try {
-    const userId = req.user.userId;
-    const { id } = req.params;
-    const product = await productService.getProductById(id);
-
-    if (!product || product.reservedBy?.toString() !== userId) {
-      return res
-        .status(StatusCodes.FORBIDDEN)
-        .json({ error: NOT_YOUR_CART_ITEM });
-    }
-
-    const updatedProduct = await productService.updateProduct(id, {
-      status: productStatuses.AVAILABLE,
-      reservedBy: null,
-      reservedAt: null,
-    });
-
-    if (!updatedProduct) {
-      throw new Error(FAILED_TO_UPDATE_PRODUCTS);
-    }
-
-    res.status(StatusCodes.OK).json(normalizeDoc(updatedProduct));
+    const updatedProduct = await productService.removeFromCart(
+      productId,
+      userId,
+    );
+    res.status(StatusCodes.OK).json(updatedProduct);
   } catch (error) {
-    res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: FAILED_TO_REMOVE_FROM_CART });
+    const status = error.status || StatusCodes.INTERNAL_SERVER_ERROR;
+    const message = error.message || FAILED_TO_REMOVE_FROM_CART;
+    res.status(status).json({ error: message });
   }
 };
 
