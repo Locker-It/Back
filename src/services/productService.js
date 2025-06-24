@@ -50,8 +50,6 @@ const deleteProduct = async (id) => {
 };
 
 const addToCart = async (productId, userId) => {
-  const product = await getProductById(productId);
-
   return updateProduct(
     productId,
     {
@@ -68,7 +66,7 @@ const getUserCart = async (userId) => {
 };
 
 const removeFromCart = async (productId, userId) => {
-  const updatedProduct = await updateProduct(
+  return updateProduct(
     productId,
     {
       status: productStatuses.AVAILABLE,
@@ -77,8 +75,6 @@ const removeFromCart = async (productId, userId) => {
     },
     getUserCartFilter(userId),
   );
-
-  return updatedProduct;
 };
 
 module.exports = {
