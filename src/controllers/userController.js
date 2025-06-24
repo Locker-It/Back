@@ -13,7 +13,9 @@ const {
 const authService = require('../services/authService');
 const {
   REFRESH_TOKEN,
+  ACCESS_TOKEN,
   REFRESH_TOKEN_COOKIE_OPTIONS,
+  ACCESS_TOKEN_COOKIE_OPTIONS,
 } = require('../constants/auth');
 const { isDuplicateEmailError } = require('../services/userService');
 
@@ -75,11 +77,23 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   try {
-    const { accessToken, refreshToken } = await authService.loginUser(req.body);
+    const { accessToken, refreshToken, user } = await authService.loginUser(
+      req.body,
+    );
+
     res.cookie(REFRESH_TOKEN, refreshToken, REFRESH_TOKEN_COOKIE_OPTIONS);
-    res.status(StatusCodes.OK).json({ accessToken });
+    res.cookie(ACCESS_TOKEN, accessToken, ACCESS_TOKEN_COOKIE_OPTIONS);
+
+    return res.status(StatusCodes.OK).json({
+      accessToken,
+      user: {
+        id: user._id,
+        username: user.username,
+        role: user.role,
+      },
+    });
   } catch (error) {
-    res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
+    return res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
   }
 };
 
@@ -110,12 +124,27 @@ const logoutUser = async (req, res) => {
     await authService.logout(refreshToken);
 
     res.clearCookie(REFRESH_TOKEN, REFRESH_TOKEN_COOKIE_OPTIONS);
+    res.clearCookie(ACCESS_TOKEN, ACCESS_TOKEN_COOKIE_OPTIONS);
     return res.status(StatusCodes.OK).json({ message: USER_LOGOUT_SUCCESS });
   } catch (error) {
     if (error.message === USER_NOT_FOUND) {
       return res.status(StatusCodes.NOT_FOUND).json({ error: error.message });
     }
     return res.status(StatusCodes.UNAUTHORIZED).json({ error: error.message });
+  }
+};
+
+const getCurrentUser = async (req, res) => {
+  try {
+    const user = await userService.getCurrentUser(req.user.userId);
+    if (!user) {
+      return res.status(StatusCodes.NOT_FOUND).json({ error: USER_NOT_FOUND });
+    }
+    return res.status(StatusCodes.OK).json(user);
+  } catch (error) {
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
   }
 };
 
@@ -129,4 +158,5 @@ module.exports = {
   loginUser,
   refreshToken: refreshTokenController,
   logoutUser,
+  getCurrentUser,
 };

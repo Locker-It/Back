@@ -1,5 +1,6 @@
 module.exports = {
   USER_NOT_FOUND: 'User not found',
+  MISSING_USER_ID: 'Missing user ID',
   INVALID_INPUT: 'Invalid input data',
   PRODUCT_NOT_FOUND: 'Product not found',
   PURCHASE_NOT_FOUND: 'Purchase not found',

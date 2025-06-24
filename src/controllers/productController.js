@@ -103,7 +103,7 @@ const removeFromCart = async (req, res) => {
       productId,
       userId,
     );
-    res.status(StatusCodes.OK).json(updatedProduct);
+    res.status(StatusCodes.OK).json(normalizeDoc(updatedProduct));
   } catch (error) {
     const status = error.status || StatusCodes.INTERNAL_SERVER_ERROR;
     const message = error.message || FAILED_TO_REMOVE_FROM_CART;
