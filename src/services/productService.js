@@ -50,19 +50,17 @@ const deleteProduct = async (id) => {
 };
 
 const addToCart = async (productId, userId) => {
-  const updatedProduct = await updateProduct(
+  const product = await getProductById(productId);
+
+  return updateProduct(
     productId,
     {
       status: productStatuses.PENDING,
       reservedBy: userId,
       reservedAt: new Date(),
     },
-    {
-      status: productStatuses.AVAILABLE,
-    },
+    { status: productStatuses.AVAILABLE },
   );
-
-  return updatedProduct;
 };
 
 const getUserCart = async (userId) => {

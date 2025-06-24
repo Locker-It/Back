@@ -59,7 +59,7 @@ const loginUser = async ({ username, password }) => {
 
   await userRepository.addRefreshToken(user._id, refreshToken);
 
-  return { accessToken, refreshToken };
+  return { accessToken, refreshToken, user };
 };
 
 const validateRefreshToken = async (token) => {
