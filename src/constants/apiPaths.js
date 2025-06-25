@@ -20,5 +20,8 @@ module.exports = {
   AVAILABLE_LOCKERS: '/',
   AVAILABLE_LOCKER_ID: '/:id',
   HOME: '/',
+  ADD_TO_CART: '/:id/add-to-cart',
+  REMOVE_FROM_CART: '/:id/remove-from-cart',
+  USER_CART: '/cart',
   CURRENT_USER: '/me'
 };
