@@ -6,11 +6,12 @@ const {
   INVALID_INPUT,
   UNKNOWN_ERROR,
 } = require('../constants/errorMessages');
+const { normalizeDoc, normalizeMany } = require('../utils/normalize');
 
 const createAvailableLocker = async (req, res) => {
   try {
     const locker = await availableLockerService.createAvailableLocker(req.body);
-    return res.status(StatusCodes.CREATED).json(locker);
+    return res.status(StatusCodes.CREATED).json(normalizeDoc(locker));
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
       return res.status(StatusCodes.BAD_REQUEST).json({ error: INVALID_INPUT });
@@ -22,7 +23,7 @@ const createAvailableLocker = async (req, res) => {
 const getAllAvailableLockers = async (req, res) => {
   try {
     const lockers = await availableLockerService.getAllAvailableLockers();
-    res.status(StatusCodes.OK).json(lockers);
+    res.status(StatusCodes.OK).json(normalizeMany(lockers));
   } catch (error) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
   }
@@ -31,7 +32,7 @@ const getAllAvailableLockers = async (req, res) => {
 const getAvailableLockerById = async (req, res) => {
   try {
     const locker = await availableLockerService.getAvailableLockerById(req.params.id);
-    res.status(StatusCodes.OK).json(locker);
+    res.status(StatusCodes.OK).json(normalizeDoc(locker));
   } catch (error) {
     res.status(StatusCodes.NOT_FOUND).json({ error: AVAILABLE_LOCKER_NOT_FOUND });
   }
@@ -40,7 +41,7 @@ const getAvailableLockerById = async (req, res) => {
 const updateAvailableLocker = async (req, res) => {
   try {
     const locker = await availableLockerService.updateAvailableLocker(req.params.id, req.body);
-    res.status(StatusCodes.OK).json(locker);
+    res.status(StatusCodes.OK).json(normalizeDoc(locker));
   } catch (error) {
     res.status(StatusCodes.NOT_FOUND).json({ error: AVAILABLE_LOCKER_NOT_FOUND });
   }
