@@ -1,4 +1,6 @@
 const productRepository = require('../repositories/productRepository');
+const availableLockerService = require('./availableLockerService');
+
 const {
   PRODUCT_NOT_FOUND,
   PRODUCT_ALREADY_RESERVED,
@@ -11,8 +13,23 @@ const getUserCartFilter = (userId) => ({
   reservedBy: userId,
 });
 
-const createProduct = async (productData) =>
-  productRepository.createProduct(productData);
+const createProduct = async (productData) => {
+  const { selectedLockerIds, ...productFields } = productData;
+
+  const product = await productRepository.createProduct(productFields);
+
+  if (Array.isArray(selectedLockerIds)) {
+    const lockerPromises = selectedLockerIds.map((lockerId) =>
+      availableLockerService.createAvailableLocker({
+        productId: product._id,
+        locker: lockerId,
+      })
+    );
+    await Promise.all(lockerPromises);
+  }
+
+  return product;
+};
 
 const getAllProducts = async (filters = {}) => {
   return productRepository.findProductByFilters(filters);
