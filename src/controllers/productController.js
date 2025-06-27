@@ -6,7 +6,7 @@ const {
   FAILED_TO_FETCH_PRODUCTS,
   FAILED_TO_ADD_TO_CART,
   FAILED_TO_FETCH_CART,
-  FAILED_TO_REMOVE_FROM_CART,
+  FAILED_TO_REMOVE_FROM_CART, MISSING_OWNER_ID,
 } = require('../constants/errorMessages');
 const { normalizeDoc, normalizeMany } = require('../utils/normalize');
 const { getUserId, getProductId } = require('../utils/request');
@@ -15,7 +15,7 @@ const createProduct = async (req, res) => {
   try {
     const ownerId = req.user?.userId;
     if (!ownerId) {
-      return res.status(StatusCodes.UNAUTHORIZED).json({ error: 'Missing owner ID' });
+      return res.status(StatusCodes.UNAUTHORIZED).json({ error: MISSING_OWNER_ID });
     }
 
     const product = await productService.createProduct({
