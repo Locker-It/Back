@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const MODEL_NAMES = require('../constants/modelNames');
 const PRODUCT_STATUSES = require('../constants/productStatuses');
+const PRODUCT_CATEGORIES = require('../constants/categories.constants');
 
 const productSchema = new mongoose.Schema(
   {
@@ -11,6 +12,11 @@ const productSchema = new mongoose.Schema(
     },
     description: {
       type: String,
+      required: true,
+    },
+    category: {
+      type: String,
+      enum: PRODUCT_CATEGORIES,
       required: true,
     },
     price: {
