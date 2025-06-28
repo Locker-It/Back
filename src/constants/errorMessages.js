@@ -26,4 +26,5 @@ module.exports = {
   NOT_YOUR_CART_ITEM: 'Not your cart item',
   FAILED_TO_UPDATE_PRODUCTS: 'Failed to update product',
   FAILED_TO_REMOVE_FROM_CART: 'Failed to remove from cart',
+  MISSING_OWNER_ID: 'Missing owner ID',
 };
