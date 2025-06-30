@@ -5,6 +5,8 @@ const {
   LOCKER_NOT_FOUND,
   INVALID_INPUT,
   UNKNOWN_ERROR,
+  ERROR_FETCHING_FREE_LOCKERS,
+  FAILED_TO_FETCH_FREE_LOCKERS,
 } = require('../constants/errorMessages');
 const { normalizeDoc, normalizeMany } = require('../utils/normalize');
 
@@ -26,6 +28,18 @@ const getAllLockers = async (req, res) => {
     res.status(StatusCodes.OK).json(normalizeMany(lockers));
   } catch (error) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
+  }
+};
+
+const getFreeLockers = async (req, res) => {
+  try {
+    const lockers = await lockerService.getFreeLockers();
+    res.status(StatusCodes.OK).json(normalizeMany(lockers));
+  } catch (err) {
+    console.error(ERROR_FETCHING_FREE_LOCKERS, err.message);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: FAILED_TO_FETCH_FREE_LOCKERS });
   }
 };
 
@@ -62,4 +76,5 @@ module.exports = {
   getLockerById,
   updateLocker,
   deleteLocker,
+  getFreeLockers,
 };

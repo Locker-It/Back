@@ -4,7 +4,7 @@ const MODEL_NAMES = require('../constants/modelNames');
 const availableLockerSchema = new mongoose.Schema(
   {
     productId: {
-      type: Number,
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
     locker: {

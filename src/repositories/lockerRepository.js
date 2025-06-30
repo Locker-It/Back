@@ -4,6 +4,9 @@ const createLocker = (data) => Locker.create(data);
 
 const getAllLockers = () => Locker.find();
 
+const getFreeLockers = () =>
+  Locker.find({ isAvailable: true }).select('lockerNumber location isAvailable');
+
 const getLockerById = (id) => Locker.findById(id);
 
 const updateLocker = (id, data) =>
@@ -17,4 +20,5 @@ module.exports = {
   getLockerById,
   updateLocker,
   deleteLocker,
+  getFreeLockers,
 };

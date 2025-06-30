@@ -15,13 +15,15 @@ module.exports = {
   LOGOUT: '/logout',
   LOCKERS: '/',
   LOCKER_ID: '/:id',
+  LOCKER_AVAILABLE: '/available',
   LOCKERS_BASE: '/lockers',
   AVAILABLE_LOCKERS_BASE: '/available-lockers',
   AVAILABLE_LOCKERS: '/',
   AVAILABLE_LOCKER_ID: '/:id',
+  AVAILABLE_LOCKERS_BY_PRODUCT_ID: '/product/:id',
   HOME: '/',
   ADD_TO_CART: '/:id/add-to-cart',
   REMOVE_FROM_CART: '/:id/remove-from-cart',
   USER_CART: '/cart',
-  CURRENT_USER: '/me'
+  CURRENT_USER: '/me',
 };
