@@ -1,14 +1,33 @@
 const { StatusCodes } = require('http-status-codes');
 const purchaseService = require('../services/purchaseService');
-const { PURCHASE_NOT_FOUND, INVALID_INPUT,PURCHASES_FETCH_FAILED } = require('../constants/errorMessages');
+const {
+  PURCHASE_NOT_FOUND,
+  INVALID_INPUT,
+  PURCHASES_FETCH_FAILED,
+  MONGOOSE_ERROR,
+  MISSING_BUYERID,
+} = require('../constants/errorMessages');
 
 const createPurchase = async (req, res) => {
   try {
-    // todo: validate if user exists
-    const purchase = await purchaseService.createPurchase(req.body);
-    res.status(StatusCodes.CREATED).json(purchase);
+    const buyerId = req.user?.userId;
+    if (!buyerId) {
+      return res
+        .status(StatusCodes.UNAUTHORIZED)
+        .json({ error: MISSING_BUYERID });
+    }
+    const purchase = await purchaseService.createPurchase({
+      ...req.body,
+      buyerId,
+    });
+    res.status(StatusCodes.CREATED).json({
+      ...(purchase.toObject ? purchase.toObject() : purchase),
+      productId: req.body.productId,
+      lockerId: req.body.lockerId,
+    });
   } catch (error) {
-    res.status(StatusCodes.BAD_REQUEST).json({ error: INVALID_INPUT });
+    console.error(MONGOOSE_ERROR, error);
+    res.status(StatusCodes.BAD_REQUEST).json({ INVALID_INPUT });
   }
 };
 
@@ -17,7 +36,9 @@ const getAllPurchases = async (req, res) => {
     const purchases = await purchaseService.getAllPurchases();
     res.status(StatusCodes.OK).json(purchases);
   } catch (error) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: PURCHASES_FETCH_FAILED });
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: PURCHASES_FETCH_FAILED });
   }
 };
 

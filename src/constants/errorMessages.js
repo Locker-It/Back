@@ -18,6 +18,10 @@ module.exports = {
   LOCKER_NOT_FOUND: 'Locker not found',
   UNKNOWN_ERROR: 'An unknown error occurred',
   AVAILABLE_LOCKER_NOT_FOUND: 'Available locker not found',
+  LOCKER_CREATION_FAILED: 'Locker creation failed for product ID',
+  ERROR_DELETING_LOCKERS_BY_PRODUCT_ID: 'Error deleting lockers by product ID:',
+  ERROR_DELETING_AVAILABLE_LOCKERS_BY_PRODUCT_ID:
+    'Error deleting Available lockers by product ID:',
   EMAIL_EXISTS: 'Email already exists',
   FAILED_TO_FETCH_PRODUCTS: 'Failed to fetch products:',
   PRODUCT_ALREADY_RESERVED: 'Product was just reserved by another user.',
@@ -27,4 +31,14 @@ module.exports = {
   FAILED_TO_UPDATE_PRODUCTS: 'Failed to update product',
   FAILED_TO_REMOVE_FROM_CART: 'Failed to remove from cart',
   MISSING_OWNER_ID: 'Missing owner ID',
+  ERROR_IN_AVAILABLE_LOCKER_BY_PRODUCTID:
+    'Error in availableLockersByProductId:',
+  FAILED_TO_FETCH_AVAILABLE_LOCKERS: 'Failed to fetch available lockers',
+  ERROR_FETCHING_FREE_LOCKERS: 'Error fetching free lockers:',
+  FAILED_TO_FETCH_FREE_LOCKERS: 'Failed to fetch free lockers',
+  RELATED_AVAILABLE_LOCKERS_IS_NOT_AN_ARRAY:
+    'relatedAvailableLockers is not an array!',
+  MISSING_PRODUCTID_IN_LOCKER: 'Missing productId in locker:',
+  MONGOOSE_ERROR: 'Mongoose error:',
+  MISSING_BUYERID:'Missing buyerId',
 };

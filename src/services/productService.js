@@ -1,12 +1,13 @@
-const productRepository = require('../repositories/productRepository');
-const availableLockerService = require('./availableLockerService');
-
+const { StatusCodes } = require('http-status-codes');
+const productStatuses = require('../constants/productStatuses');
 const {
+  LOCKER_CREATION_FAILED,
   PRODUCT_NOT_FOUND,
   PRODUCT_ALREADY_RESERVED,
 } = require('../constants/errorMessages');
-const productStatuses = require('../constants/productStatuses');
-const { StatusCodes } = require('http-status-codes');
+
+const productRepository = require('../repositories/productRepository');
+const availableLockerService = require('./availableLockerService');
 
 const getUserCartFilter = (userId) => ({
   status: productStatuses.PENDING,
@@ -17,17 +18,23 @@ const createProduct = async (productData) => {
   const { selectedLockerIds, ...productFields } = productData;
 
   const product = await productRepository.createProduct(productFields);
-
-  if (Array.isArray(selectedLockerIds)) {
-    const lockerPromises = selectedLockerIds.map((lockerId) =>
-      availableLockerService.createAvailableLocker({
-        productId: product._id,
-        locker: lockerId,
-      })
+  try {
+    if (Array.isArray(selectedLockerIds)) {
+      await Promise.all(
+        selectedLockerIds.map((lockerId) =>
+          availableLockerService.createAvailableLocker({
+            productId: product._id,
+            locker: lockerId,
+          }),
+        ),
+      );
+    }
+  } catch (lockerErr) {
+    console.error(
+      `${LOCKER_CREATION_FAILED} for product ${product._id}:`,
+      lockerErr.message,
     );
-    await Promise.all(lockerPromises);
   }
-
   return product;
 };
 
@@ -37,10 +44,14 @@ const getAllProducts = async (filters = {}) => {
 
 const getProductById = async (id) => {
   const product = await productRepository.getProductById(id);
-  if (!product) {
-    throw new Error(PRODUCT_NOT_FOUND);
-  }
-  return product;
+  if (!product) throw new Error(PRODUCT_NOT_FOUND);
+
+  const availableLockers =
+    await availableLockerService.getAvailableLockersByProductId(id);
+  return {
+    ...(product.toObject ? product.toObject() : product),
+    availableLockers: availableLockers,
+  };
 };
 
 const updateProduct = async (id, updateData, filter = {}) => {
@@ -59,28 +70,37 @@ const updateProduct = async (id, updateData, filter = {}) => {
 };
 
 const deleteProduct = async (id) => {
-  const deletedProduct = await productRepository.deleteProduct(id);
-  if (!deletedProduct) {
-    throw new Error(PRODUCT_NOT_FOUND);
+  const { deletedCount } =
+    await availableLockerService.deleteAvailableLockersByProductId(id);
+
+  if (deletedCount === 0) {
+    console.warn(`No available lockers found for product ${id}`);
   }
+
+  const deletedProduct = await productRepository.deleteProduct(id);
+  if (!deletedProduct) throw new Error(PRODUCT_NOT_FOUND);
+
   return deletedProduct;
 };
 
-const addToCart = async (productId, userId) => {
+const addToCart = async (productId, userId, lockerId) => {
   return updateProduct(
     productId,
     {
       status: productStatuses.PENDING,
       reservedBy: userId,
       reservedAt: new Date(),
+      lockerId,
     },
     { status: productStatuses.AVAILABLE },
   );
 };
 
-const getUserCart = async (userId) => {
-  return productRepository.findProductByFilters(getUserCartFilter(userId));
-};
+const getUserCart = async (userId) =>
+  productRepository
+    .findProductByFilters(getUserCartFilter(userId))
+    .populate('lockerId', 'lockerNumber location');
+
 
 const removeFromCart = async (productId, userId) => {
   return updateProduct(

@@ -1,9 +1,18 @@
 const lockerRepository = require('../repositories/lockerRepository');
-const { LOCKER_NOT_FOUND } = require('../constants/errorMessages');
+const {
+  LOCKER_NOT_FOUND,
+  RELATED_AVAILABLE_LOCKERS_IS_NOT_AN_ARRAY,
+  MISSING_PRODUCTID_IN_LOCKER,
+} = require('../constants/errorMessages');
+const availableLockerRepository = require('../repositories/availableLockerRepository');
+const productRepository = require('../repositories/productRepository');
+const { UNAVAILABLE } = require('../constants/productStatuses');
 
 const createLocker = async (data) => lockerRepository.createLocker(data);
 
 const getAllLockers = async () => lockerRepository.getAllLockers();
+
+const getFreeLockers = () => lockerRepository.getFreeLockers();
 
 const getLockerById = async (id) => {
   const locker = await lockerRepository.getLockerById(id);
@@ -18,8 +27,39 @@ const updateLocker = async (id, data) => {
 };
 
 const deleteLocker = async (id) => {
+  const relatedAvailableLockers =
+    await availableLockerRepository.findByLockerId(id);
+
+  if (!relatedAvailableLockers || !Array.isArray(relatedAvailableLockers)) {
+    console.error(RELATED_AVAILABLE_LOCKERS_IS_NOT_AN_ARRAY);
+    return;
+  }
+  for (const locker of relatedAvailableLockers) {
+    if (!locker.productId) {
+      console.error(MISSING_PRODUCTID_IN_LOCKER, locker);
+    }
+  }
+  const productIds = relatedAvailableLockers.map((locker) =>
+    locker.productId?.toString(),
+  );
+  for (const productId of productIds) {
+    const remainingCount =
+      await availableLockerRepository.countAvailableLockersByProductId(
+        productId,
+        id,
+      );
+    console.log(remainingCount);
+    if (remainingCount === 0) {
+      await productRepository.updateProduct(productId, {
+        status: UNAVAILABLE,
+      });
+    }
+  }
+  await availableLockerRepository.deleteAvailableLockersByLockerId(id);
   const deleted = await lockerRepository.deleteLocker(id);
-  if (!deleted) throw new Error(LOCKER_NOT_FOUND);
+  if (!deleted) {
+    throw new Error(LOCKER_NOT_FOUND);
+  }
   return deleted;
 };
 
@@ -29,4 +69,5 @@ module.exports = {
   getLockerById,
   updateLocker,
   deleteLocker,
+  getFreeLockers,
 };
