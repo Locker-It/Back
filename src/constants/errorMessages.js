@@ -40,5 +40,10 @@ module.exports = {
     'relatedAvailableLockers is not an array!',
   MISSING_PRODUCTID_IN_LOCKER: 'Missing productId in locker:',
   MONGOOSE_ERROR: 'Mongoose error:',
-  MISSING_BUYERID:'Missing buyerId',
+  MISSING_BUYER_ID:'Missing buyerId',
+
+  LOG_WARNINGS: {
+    NO_AVAILABLE_LOCKERS_FOR_PRODUCT: (productId) =>
+      `No available lockers found for product ${productId}`,
+  },
 };

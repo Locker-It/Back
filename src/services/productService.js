@@ -4,8 +4,8 @@ const {
   LOCKER_CREATION_FAILED,
   PRODUCT_NOT_FOUND,
   PRODUCT_ALREADY_RESERVED,
+  LOG_WARNINGS,
 } = require('../constants/errorMessages');
-
 const productRepository = require('../repositories/productRepository');
 const availableLockerService = require('./availableLockerService');
 
@@ -74,7 +74,7 @@ const deleteProduct = async (id) => {
     await availableLockerService.deleteAvailableLockersByProductId(id);
 
   if (deletedCount === 0) {
-    console.warn(`No available lockers found for product ${id}`);
+    console.warn(LOG_WARNINGS.NO_AVAILABLE_LOCKERS_FOR_PRODUCT(id));
   }
 
   const deletedProduct = await productRepository.deleteProduct(id);
@@ -100,7 +100,6 @@ const getUserCart = async (userId) =>
   productRepository
     .findProductByFilters(getUserCartFilter(userId))
     .populate('lockerId', 'lockerNumber location');
-
 
 const removeFromCart = async (productId, userId) => {
   return updateProduct(

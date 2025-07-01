@@ -1,5 +1,9 @@
 const AvailableLocker = require('../models/availableLockerModel');
-const { LOCKER } = require('../constants/repositoryModel');
+const {
+  LOCKER,
+  LOCKER_NUMBER,
+  LOCKER_LOCATION,
+} = require('../constants/locker.constants');
 const convertObjectId = require('../utils/convertObjectId');
 const mongoose = require('mongoose');
 
@@ -29,7 +33,7 @@ const getAvailableLockersByProductId = (productId) =>
   AvailableLocker.find({ productId: convertObjectId(productId) })
     .populate({
       path: LOCKER,
-      select: 'lockerNumber location',
+      select: `${LOCKER_NUMBER} ${LOCKER_LOCATION}`,
       match: { isAvailable: true },
     })
     .lean();

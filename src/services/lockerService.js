@@ -1,7 +1,6 @@
 const lockerRepository = require('../repositories/lockerRepository');
 const {
   LOCKER_NOT_FOUND,
-  RELATED_AVAILABLE_LOCKERS_IS_NOT_AN_ARRAY,
   MISSING_PRODUCTID_IN_LOCKER,
 } = require('../constants/errorMessages');
 const availableLockerRepository = require('../repositories/availableLockerRepository');
@@ -30,10 +29,8 @@ const deleteLocker = async (id) => {
   const relatedAvailableLockers =
     await availableLockerRepository.findByLockerId(id);
 
-  if (!relatedAvailableLockers || !Array.isArray(relatedAvailableLockers)) {
-    console.error(RELATED_AVAILABLE_LOCKERS_IS_NOT_AN_ARRAY);
-    return;
-  }
+  if (!relatedAvailableLockers?.length) return;
+  
   for (const locker of relatedAvailableLockers) {
     if (!locker.productId) {
       console.error(MISSING_PRODUCTID_IN_LOCKER, locker);
@@ -48,7 +45,6 @@ const deleteLocker = async (id) => {
         productId,
         id,
       );
-    console.log(remainingCount);
     if (remainingCount === 0) {
       await productRepository.updateProduct(productId, {
         status: UNAVAILABLE,

@@ -22,10 +22,10 @@ const createPurchase = async ({ productId, lockerId, buyerId, ...rest }) => {
     throw err;
   }
   await lockerService.updateLocker(lockerId, { isAvailable: false });
-  const mappings = await availableLockerRepository.findByLockerId(lockerId);
+  const availableLockerRecords = await availableLockerRepository.findByLockerId(lockerId);
   const otherProductIds = [
     ...new Set(
-      mappings
+      availableLockerRecords
         .map((m) => m.productId.toString())
         .filter((id) => id !== productId.toString()),
     ),
@@ -40,7 +40,7 @@ const createPurchase = async ({ productId, lockerId, buyerId, ...rest }) => {
       await productRepository.updateProduct(otherId, {
         status: PRODUCT_STATUSES.UNAVAILABLE,
       });
-      // TODO: notify seller
+      // TODO: Notify the seller that his product was marked as unavailable
     }
   }
   await productRepository.updateProduct(productId, {
