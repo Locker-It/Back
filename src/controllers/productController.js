@@ -20,15 +20,12 @@ const createProduct = async (req, res) => {
         .status(StatusCodes.UNAUTHORIZED)
         .json({ error: MISSING_OWNER_ID });
     }
-    const { selectedLockerIds, ...rest } = req.body;
     const product = await productService.createProduct({
-      ...rest,
-      selectedLockerIds,
+      ...req.body,
       ownerId,
     });
     res.status(StatusCodes.CREATED).json(normalizeDoc(product));
   } catch (error) {
-    console.error(error);
     res.status(StatusCodes.BAD_REQUEST).json({ error: INVALID_INPUT });
   }
 };
@@ -83,9 +80,13 @@ const deleteProduct = async (req, res) => {
 const addToCart = async (req, res) => {
   const userId = getUserId(req);
   const productId = getProductId(req);
-  const { lockerId } = req.body; 
+  const { lockerId } = req.body;
   try {
-    const updatedProduct = await productService.addToCart(productId, userId, lockerId);
+    const updatedProduct = await productService.addToCart(
+      productId,
+      userId,
+      lockerId,
+    );
     return res.status(StatusCodes.OK).json(normalizeDoc(updatedProduct));
   } catch (error) {
     const status = error.status || StatusCodes.INTERNAL_SERVER_ERROR;

@@ -1,11 +1,18 @@
 const Locker = require('../models/lockerModel');
+const {
+  LOCKER_NUMBER,
+  LOCKER_LOCATION,
+  IS_AVAILABLE,
+} = require('../constants/locker.constants');
 
 const createLocker = (data) => Locker.create(data);
 
 const getAllLockers = () => Locker.find();
 
 const getFreeLockers = () =>
-  Locker.find({ isAvailable: true }).select('lockerNumber location isAvailable');
+  Locker.find({ isAvailable: true }).select(
+    `${LOCKER_NUMBER} ${LOCKER_LOCATION} ${IS_AVAILABLE}`,
+  );
 
 const getLockerById = (id) => Locker.findById(id);
 

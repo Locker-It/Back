@@ -31,7 +31,10 @@ const deleteAvailableLocker = async (id) => {
 };
 
 const deleteAvailableLockersByProductId = async (productId) => {
-  const result = await availableLockerRepository.deleteAvailableLockersByProductId(productId);
+  const result =
+    await availableLockerRepository.deleteAvailableLockersByProductId(
+      productId,
+    );
 
   if (result.deletedCount === 0) {
     const err = new Error(AVAILABLE_LOCKER_NOT_FOUND);
@@ -48,10 +51,10 @@ const getAvailableLockersByProductId = async (productId) => {
   const availableLockers = rows
     .map((r) => r.locker)
     .filter(Boolean)
-    .map((locker) => ({
-      _id: locker._id,
-      location: locker.location,
-      lockerNumber: locker.lockerNumber,
+    .map(({ _id, location, lockerNumber }) => ({
+      _id,
+      location,
+      lockerNumber,
     }));
 
   return availableLockers;

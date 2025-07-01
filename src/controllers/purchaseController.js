@@ -5,7 +5,7 @@ const {
   INVALID_INPUT,
   PURCHASES_FETCH_FAILED,
   MONGOOSE_ERROR,
-  MISSING_BUYERID,
+  MISSING_BUYER_ID,
 } = require('../constants/errorMessages');
 
 const createPurchase = async (req, res) => {
@@ -14,7 +14,7 @@ const createPurchase = async (req, res) => {
     if (!buyerId) {
       return res
         .status(StatusCodes.UNAUTHORIZED)
-        .json({ error: MISSING_BUYERID });
+        .json({ error: MISSING_BUYER_ID });
     }
     const purchase = await purchaseService.createPurchase({
       ...req.body,
