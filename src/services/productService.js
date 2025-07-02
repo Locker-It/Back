@@ -108,6 +108,7 @@ const removeFromCart = async (productId, userId) => {
       status: productStatuses.AVAILABLE,
       reservedBy: null,
       reservedAt: null,
+      lockerId: null,
     },
     getUserCartFilter(userId),
   );
