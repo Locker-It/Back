@@ -8,6 +8,7 @@ const {
 } = require('../constants/errorMessages');
 const productRepository = require('../repositories/productRepository');
 const availableLockerService = require('./availableLockerService');
+const sortOptions = require('../constants/sortOptions');
 
 const getUserCartFilter = (userId) => ({
   status: productStatuses.PENDING,
@@ -38,8 +39,22 @@ const createProduct = async (productData) => {
   return product;
 };
 
-const getAllProducts = async (filters = {}) => {
-  return productRepository.findProductByFilters(filters);
+const getAllProducts = async (query = {}) => {
+  const { status, sort, limit } = query;
+  const filters = {};
+
+  if (status) {
+    const statusArr = status.split(',').map((s) => s.trim().toLowerCase());
+    filters.status = statusArr.length === 1 ? statusArr[0] : { $in: statusArr };
+  }
+  const options = {};
+  if (sort === sortOptions.NEWEST) {
+    options.sort = { createdAt: sortOptions.DESCENDING };
+  }
+  if (limit) {
+    options.limit = Number(limit);
+  }
+  return productRepository.findProductByFilters(filters, options);
 };
 
 const getProductById = async (id) => {
