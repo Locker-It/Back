@@ -33,6 +33,7 @@ const productSchema = new mongoose.Schema(
         PRODUCT_STATUSES.AVAILABLE,
         PRODUCT_STATUSES.SOLD,
         PRODUCT_STATUSES.PENDING,
+        PRODUCT_STATUSES.UNAVAILABLE,
       ],
       default: PRODUCT_STATUSES.AVAILABLE,
     },
@@ -48,6 +49,11 @@ const productSchema = new mongoose.Schema(
     },
     reservedAt: {
       type: Date,
+      default: null,
+    },
+    lockerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: MODEL_NAMES.LOCKER,
       default: null,
     },
   },
