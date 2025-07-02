@@ -32,13 +32,7 @@ const createProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   try {
-    const { status } = req.query;
-    const filters = {};
-    if (status) {
-      filters.status = status.toLowerCase();
-    }
-
-    const products = await productService.getAllProducts(filters);
+    const products = await productService.getAllProducts(req.query);
     res.status(StatusCodes.OK).json(normalizeMany(products));
   } catch (error) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
