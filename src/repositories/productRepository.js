@@ -15,7 +15,16 @@ const updateProduct = (id, updateData, filter = {}) =>
 
 const deleteProduct = (id) => Product.findByIdAndDelete(id);
 
-const findProductByFilters = (filters) => Product.find(filters);
+const findProductByFilters = (filters = {}, options = {}) => {
+  const query = Product.find(filters);
+  if (options.sort) {
+    query.sort(options.sort);
+  }
+  if (options.limit) {
+    query.limit(options.limit);
+  }
+  return query;
+};
 
 module.exports = {
   createProduct,

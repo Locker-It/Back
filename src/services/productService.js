@@ -5,6 +5,7 @@ const {
 } = require('../constants/errorMessages');
 const productStatuses = require('../constants/productStatuses');
 const { StatusCodes } = require('http-status-codes');
+const sortOptions= require('../constants/sortOptions');
 
 const getUserCartFilter = (userId) => ({
   status: productStatuses.PENDING,
@@ -14,8 +15,20 @@ const getUserCartFilter = (userId) => ({
 const createProduct = async (productData) =>
   productRepository.createProduct(productData);
 
-const getAllProducts = async (filters = {}) => {
-  return productRepository.findProductByFilters(filters);
+const getAllProducts = async (query = {}) => {
+  const { status, sort, limit } = query;
+  const filters = {};
+  if (status) {
+    filters.status = status.toLowerCase();
+  }
+  const options = {};
+  if (sort === sortOptions.NEWEST) {
+    options.sort = { createdAt: sortOptions.DESCENDING };
+  }
+  if (limit) {
+    options.limit = Number(limit);
+  }
+  return productRepository.findProductByFilters(filters, options);
 };
 
 const getProductById = async (id) => {
