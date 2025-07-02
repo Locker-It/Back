@@ -1,9 +1,13 @@
 const availableLockerRepository = require('../repositories/availableLockerRepository');
+const productRepository = require('../repositories/productRepository');
 const { AVAILABLE_LOCKER_NOT_FOUND } = require('../constants/errorMessages');
+const productService = require('./productService');
 
-const createAvailableLocker = async (data) => availableLockerRepository.createAvailableLocker(data);
+const createAvailableLocker = async (data) =>
+  availableLockerRepository.createAvailableLocker(data);
 
-const getAllAvailableLockers = async () => availableLockerRepository.getAllAvailableLockers();
+const getAllAvailableLockers = async () =>
+  availableLockerRepository.getAllAvailableLockers();
 
 const getAvailableLockerById = async (id) => {
   const locker = await availableLockerRepository.getAvailableLockerById(id);
@@ -12,7 +16,10 @@ const getAvailableLockerById = async (id) => {
 };
 
 const updateAvailableLocker = async (id, data) => {
-  const updated = await availableLockerRepository.updateAvailableLocker(id, data);
+  const updated = await availableLockerRepository.updateAvailableLocker(
+    id,
+    data,
+  );
   if (!updated) throw new Error(AVAILABLE_LOCKER_NOT_FOUND);
   return updated;
 };
@@ -23,10 +30,42 @@ const deleteAvailableLocker = async (id) => {
   return deleted;
 };
 
+const deleteAvailableLockersByProductId = async (productId) => {
+  const result =
+    await availableLockerRepository.deleteAvailableLockersByProductId(
+      productId,
+    );
+
+  if (result.deletedCount === 0) {
+    const err = new Error(AVAILABLE_LOCKER_NOT_FOUND);
+    err.status = 404;
+    throw err;
+  }
+  return result;
+};
+
+const getAvailableLockersByProductId = async (productId) => {
+  const rows =
+    await availableLockerRepository.getAvailableLockersByProductId(productId);
+
+  const availableLockers = rows
+    .map((r) => r.locker)
+    .filter(Boolean)
+    .map(({ _id, location, lockerNumber }) => ({
+      _id,
+      location,
+      lockerNumber,
+    }));
+
+  return availableLockers;
+};
+
 module.exports = {
   createAvailableLocker,
   getAllAvailableLockers,
   getAvailableLockerById,
+  getAvailableLockersByProductId,
   updateAvailableLocker,
   deleteAvailableLocker,
+  deleteAvailableLockersByProductId,
 };

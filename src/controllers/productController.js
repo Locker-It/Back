@@ -6,7 +6,8 @@ const {
   FAILED_TO_FETCH_PRODUCTS,
   FAILED_TO_ADD_TO_CART,
   FAILED_TO_FETCH_CART,
-  FAILED_TO_REMOVE_FROM_CART, MISSING_OWNER_ID,
+  FAILED_TO_REMOVE_FROM_CART,
+  MISSING_OWNER_ID,
 } = require('../constants/errorMessages');
 const { normalizeDoc, normalizeMany } = require('../utils/normalize');
 const { getUserId, getProductId } = require('../utils/request');
@@ -15,14 +16,14 @@ const createProduct = async (req, res) => {
   try {
     const ownerId = req.user?.userId;
     if (!ownerId) {
-      return res.status(StatusCodes.UNAUTHORIZED).json({ error: MISSING_OWNER_ID });
+      return res
+        .status(StatusCodes.UNAUTHORIZED)
+        .json({ error: MISSING_OWNER_ID });
     }
-
     const product = await productService.createProduct({
       ...req.body,
       ownerId,
     });
-
     res.status(StatusCodes.CREATED).json(normalizeDoc(product));
   } catch (error) {
     res.status(StatusCodes.BAD_REQUEST).json({ error: INVALID_INPUT });
@@ -79,9 +80,13 @@ const deleteProduct = async (req, res) => {
 const addToCart = async (req, res) => {
   const userId = getUserId(req);
   const productId = getProductId(req);
-
+  const { lockerId } = req.body;
   try {
-    const updatedProduct = await productService.addToCart(productId, userId);
+    const updatedProduct = await productService.addToCart(
+      productId,
+      userId,
+      lockerId,
+    );
     return res.status(StatusCodes.OK).json(normalizeDoc(updatedProduct));
   } catch (error) {
     const status = error.status || StatusCodes.INTERNAL_SERVER_ERROR;

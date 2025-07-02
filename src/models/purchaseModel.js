@@ -16,7 +16,7 @@ const purchaseSchema = new mongoose.Schema(
       unique: true,
     },
     lockerId: {
-      type: Number,
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
     status: {
