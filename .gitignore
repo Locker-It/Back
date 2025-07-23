@@ -98,3 +98,4 @@ out/
 # Other
 *.local
 *.swp
+.env.production

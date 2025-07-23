@@ -1,4 +1,6 @@
-require('dotenv').config();
+const { ENV_PRODUCTION } = require('./constants/env');
+
+require('dotenv').config({ path: `.env${process.env.NODE_ENV === ENV_PRODUCTION ? '.production' : ''}` });
 
 const connectDB = require('./db');
 const app = require('./app');
