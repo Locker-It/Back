@@ -8,7 +8,7 @@ const app = require('./app');
 const port = process.env.PORT || 5050;
 
 connectDB().then(() => {
-  app.listen(port, () => {
-    console.log(`Listening: http://localhost:${port}`);
+  app.listen(port, '0.0.0.0', () => {
+    console.log(`Listening on port ${port}`);
   });
 });
