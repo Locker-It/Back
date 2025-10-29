@@ -2,7 +2,7 @@ name: Deploy Backend to EC2
 
 on:
   push:
-    branches: [ main ]  
+    branches: [ main ]
 
 jobs:
   deploy:
@@ -33,13 +33,14 @@ jobs:
             docker rm lockerit-backend || true
             docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/lockerit-backend || true
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/lockerit-backend
-            docker run -d \
-              -p 3000:3000 \
-              -e NODE_ENV=production \
-              -e MONGO_URI=${{ secrets.MONGO_URI }} \
-              -e JWT_ACCESS_SECRET=${{ secrets.JWT_ACCESS_SECRET }} \
-              -e JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }} \
-              -e CLIENT_ORIGIN=${{ secrets.CLIENT_ORIGIN }} \
+            docker run -d -p 3000:3000 \
               --name lockerit-backend \
               --restart=always \
+              -e NODE_ENV=production \
+              -e MONGO_URI="${{ secrets.MONGO_URI }}" \
+              -e JWT_ACCESS_SECRET="${{ secrets.JWT_ACCESS_SECRET }}" \
+              -e JWT_REFRESH_SECRET="${{ secrets.JWT_REFRESH_SECRET }}" \
+              -e CLIENT_ORIGIN="${{ secrets.CLIENT_ORIGIN }}" \
               ${{ secrets.DOCKERHUB_USERNAME }}/lockerit-backend
+            echo "✅ Deployment completed successfully"
+            docker ps | grep lockerit-backend
